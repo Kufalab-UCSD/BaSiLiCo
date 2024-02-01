@@ -1,0 +1,1173 @@
+#!/pro/icm/icms/icmng64 -W/pro/icm/icms/
+
+l_commands = no
+l_debug = l_commands
+l_info = l_commands
+
+ifile = Getarg("if" "s_")
+
+# file with residue selection in the following format:
+# A1/1,2,3,-,5,-,-,10|A2/1,2,3
+rselfile = Getarg("rsel" "s_")
+
+# root file name for SVG output
+# actual file names are: {osvg}_{sort}{mode}.svg
+# sort: cl | ob
+# mode: BCPc | BCP | BSc | BS | S | T
+# all-SVG file is written to osvg
+osvg = Getarg("osvg" "s_")
+
+ohtml = Getarg("ohtml" "s_")
+otsv = Getarg("otsv" "s_")
+
+# macro die s_ l_notAnError
+f = "scripts/basilico/macroDieWeb.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroDieWeb.icm"
+  if (!Exist(f) ) then
+    print "macroDieWeb.icm not found"
+    quit 1
+  endif # f 
+endif # f 
+call f
+
+# macro checkFile s_file s_fileLabel
+f = "scripts/basilico/macroCheckFile.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroCheckFile.icm"
+  if (!Exist(f) ) then ; die "macroCheckFile.icm not found" ; endif
+endif # f 
+call f
+
+# function s_rsel
+f =  "scripts/basilico/funcCheckRsel.icm"
+if (!Exist(f) ) then
+  f = "basilico/funcCheckRsel.icm"
+  if (!Exist(f) ) then ; die "funcCheckRsel.icm not found" ; endif
+endif # f 
+call f
+
+
+l_showResCodeInSelection = no
+
+Stype = {"B", "C", "P"}
+Stypea = {"S", "T"}
+StypeWord = {"Backbone", "Carbon", "Polar"}
+StypeaWord = {"Side chain", "Total"}
+StypeTitle = {"Backbone contact", "Nonpolar side chain contact", "Polar side chain contact"}
+StypeaTitle = {"Side chain contact", "Residue contact"}
+StypeClr = {"#ffa500", "#808080", "#00ffff"}
+StypeaClr = {"#ff00ff", "#008000"}
+Ssplit = {"BCP", "BS", "S", "T"}
+
+checkFile ifile "stre"
+read binary table only ifile
+
+# determine residues for the header
+# use residues with strong contacts with any ligand by default
+# otherwise use user-provided selection
+if (rselfile != "s_") then
+  if (!Exist(rselfile) ) then ; die "residue selection file not found" ; endif
+  read string rselfile name="srsel"
+  # check that user-provided selection is valid
+  ssel = CheckRsel(srsel)
+  if (ssel == "") then ; die "invalid selection" ; endif
+  group table t Sarray(1 srsel) "rsel"
+  # each chain
+  split t.rsel separator="|"
+  add column t Field(t.rsel 1 "/") name="ch"
+  add column t Field(t.rsel 2 "/") name="resNum"
+  for i = 1, Nof(t)
+    S = Split(t.resNum[i] ",")
+    sch = t.ch[i]
+    group table tmp S "ori"
+    add column tmp 0 name="i"
+    add column tmp "" name="ins"
+    add column tmp sch name="ch"
+    # regular residue numbers
+    ii = Index(tmp.ori != "-")
+    if (Nof(ii) > 0) then
+      tmp.i[ii] = Iarray(tmp.ori[ii])
+      s = "tmut.seq" + sch
+      sseq = $s
+      group table tmp2 Count(Length(sseq) ) "i" Split(sseq "") "res"
+      join left tmp.i tmp2.i name="tmp"
+      delete tmp2
+    endif # ii
+    # gaps: use previous residue number + zz insertion code + i of gap
+    ii = Index(tmp.ori == "-")
+    n = Nof(ii)
+    for j = 1, n
+      k = ii[j]
+      k1 = k - 1
+      if (k1 > 0) then ; tmp.i[k] = tmp.i[k1] ; endif
+      tmp.ins[k] = "zz" + String(j)
+      tmp.res[k] = "-"
+    endfor # i
+    # save to t2
+    add t2 tmp
+    delete tmp
+  endfor # i
+  delete t
+  # merge with tres to get rnum
+  add column t2 Sarray(t2.i) + t2.ins name="rnum2"
+  add column t2 t2.ch + Sarray(Nof(t2) "@") + t2.rnum2 name="sig"
+  add column tres tres.ch + Sarray(Nof(tres) "@") + tres.original name="sig"
+  delete tres.ch tres.res
+  join left t2.sig tres.sig name="t2"
+  delete tres
+  # for all extra residues add zy insertion code
+  ii = Index(t2.resNum == "")
+  n = Nof(ii)
+  if (n > 0) then
+    t2.resNum[ii] = t2.rnum2[ii] + Sarray(n "zy")
+    t2.original[ii] = t2.resNum[ii]
+    # change tmut accordingly
+    add column tmut tmut.ch + Sarray(Nof(tmut) "@") + tmut.original name="sig"
+    jj = Index(tmut.sig == t2.sig[ii])
+    nj = Nof(jj)
+    if (nj > 0) then
+      tmut.original[jj] = tmut.original[jj] + Sarray(nj "zy")
+    endif # nj
+    delete tmut.sig
+  endif # n
+  group table tres t2.original "original" t2.resNum "resNum" t2.ch "ch" t2.res "res"
+  # full list of rnums
+  srnum = Sum(t2.resNum ",")
+  delete t2
+else
+  t = tstre.type == "T" & tstre.stre > tdef.r_streCutoff
+  group t.sel
+  add column t Field(t.sel 1 "/") name="rnum"
+  delete tres.resNum != t.rnum  ### 2024-01-31 IK added. I honestly do not undertand how this branch even works at all; there is no proper treatment of chains or anything. 
+  srnum = Sum(Unique(t.rnum sort) ",") 
+  delete t
+endif # rselfile
+# add rnum to tmut
+add column tmut tmut.ch + Sarray(Nof(tmut) "@") + tmut.original name="sig"
+group table t tres.ch + Sarray(Nof(tres) "@") + tres.original "sig" tres.resNum "rnum"
+join left tmut.sig t.sig name="tmut"
+delete tmut.sig tmut.original tmut.ch tmut.swiss
+delete t
+
+# create master table: full rectangle by split, rnum, type, and ligcl
+ligclmax = Max(tob.ligcl)
+ssplit = Sum(Ssplit ",")
+stype = Sum(Stype // Stypea ",")
+sligcl = Sum(Sarray(Count(0 ligclmax) ) ",")
+group table tall Sarray(1 ssplit) "split" Sarray(1 srnum) "rnum" Sarray(1 stype) "type" Sarray(1 sligcl) "ligcl"
+split tall.rnum separator=","
+split tall.split separator=","
+split tall.type separator=","
+split tall.ligcl separator=","
+# remove irrelevant groups for the given split
+for i = 1, Nof(Ssplit)
+  ssplit = Ssplit[i]
+  delete tall.split == ssplit & tall.type != Split(ssplit "")
+endfor # i
+# make rnum S_
+add column tall Sarray(tall.rnum) name="rnum2"
+delete tall.rnum
+rename tall.rnum2 "rnum"
+add column tall tall.rnum + Sarray(Nof(tall) "/") + tall.type name="sel"
+
+# names for ligand clusters
+# object:residues[; object:residues]
+# max characters before truncation
+maxLigclLen = 12
+t = tlig
+add column t t.obNm + Sarray(Nof(t) "@") + t.ligcl name="sig"
+group t.sig t.obNm "first" t.ligcl "first" t.rsNm "sum"
+add column t t.obNm + Sarray(Nof(t) ":") + t.rsNm name="ligcls"
+group t.ligcl t.ligcls "sum" separator="; "
+add column t t.ligcls name="ligclss"
+add column t Length(t.ligclss) name="len"
+ii = Index(t.len > maxLigclLen)
+n = Nof(ii)
+if (n > 0) then
+  t.ligclss[ii] = Field(Sarray(t.ligclss[ii] 1 maxLigclLen) 1 ";") + Sarray(n "...")
+endif # n
+delete t.len
+# add special name for ensemble
+add t # i_out
+t.ligcl[i_out] = 0
+t.ligcls[i_out] = "all"
+t.ligclss[i_out] = "all"
+# special flag to mark long labels
+add column t Trim(Length(Replace(t.ligclss "..." "A") ) - maxLigclLen, 0 1) name="long"
+# keep full ligcls in a separate table, no need to append to the master table
+sort t.ligcl
+tligcl = t
+delete tligcl.ligclss
+delete t.ligcls
+join left tall.ligcl t.ligcl name="tall"
+delete t
+
+# add contact strengths for ligand clusters
+group table t tstre.sel + Sarray(Nof(tstre) "@") + Sarray(tstre.ligcl) "sig" tstre.res "res" tstre.stre "stre" tstre.clr "clr"
+add column tall tall.sel + Sarray(Nof(tall) "@") + Sarray(tall.ligcl) name="sig"
+join left tall.sig t.sig name="tall"
+delete t
+delete tall.sig
+
+# add consensus strengths
+add column tall tall.split + Sarray(Nof(tall) "@") + tall.sel name="sig"
+group table t tcont.split + Sarray(Nof(tcont) "@") + tcont.sel "sig" tcont.res "res" tcont.w "stre" tcont.clrw "clr"
+tall0 = tall.ligcl == 0
+delete tall.ligcl == 0
+delete tall0.stre tall0.clr tall0.res
+join left tall0.sig t.sig name="tall0"
+delete t
+add tall tall0
+delete tall0
+delete tall.sig tall.sel
+
+# add missing contact strengths and residue codes (for contacts without records in tstre and tcont)
+ii = Index(tall.stre == Toreal("ND") )
+if (Nof(ii) > 0) then
+  tall.stre[ii] = 0.
+  tall.clr[ii] = "#ffffff" # white
+endif # ii
+rename tres.res "resOrig"
+join left tall.rnum tres.resNum name="tall"
+rename tall.original "resNum"
+ii = Index(tall.res == "")
+if (Nof(ii) > 0) then
+  tall.res[ii] = tall.resOrig[ii]
+endif # ii
+delete tall.resOrig
+
+# order ligand clusters by fpcl order
+group table t CL.ligcl "ligcl" CL.ord_1 "oBCP" CL.fpclBCP "fpclBCP" CL.ord_2 "oBS" CL.fpclBS "fpclBS" CL.ord_3 "oS" CL.fpclS "fpclS" CL.ord_4 "oT" CL.fpclT "fpclT"
+# add ensemble
+add t # i_out
+t.ligcl[i_out] = 0
+t.oBCP[i_out] = 0
+t.fpclBCP[i_out] = 0
+t.oBS[i_out] = 0
+t.fpclBS[i_out] = 0
+t.oS[i_out] = 0
+t.fpclS[i_out] = 0
+t.oT[i_out] = 0
+t.fpclT[i_out] = 0
+join left tall.ligcl t.ligcl name="tall"
+delete t
+
+# order ligand clusters by object order
+t = tob
+add column t Count(Nof(t) ) name="cnt"
+group t.ligcl t.cnt "min"
+sort t.cnt t.ligcl
+delete t.cnt
+add column t Count(ligclmax) name="oob"
+# add ensemble
+add t # i_out
+t.ligcl[i_out] = 0
+t.oob[i_out] = 0
+join left tall.ligcl t.ligcl name="tall"
+delete t
+
+# sort by cluster order (BCP)
+# second sort by rnum to handle insertion codes
+sort tall.split tall.oBCP number tall.rnum tall.rnum tall.type
+
+# SVG parameters
+# main grid size
+gridsz = 32
+# chains/residues header
+xchleft = 3 * gridsz
+hchfill = 2 * gridsz
+ychcen     =  hchfill      / 6
+yrescen    = (hchfill * 3) / 6
+yresNumcen = (hchfill * 5) / 6
+# residue label width
+wres = gridsz
+# minimal chain width
+wchmin = wres * 2
+# chain colors, A1/A2/A1/A2/...
+Schclr = {"#ABFCAB", "#74BCF2"}
+# zoom factor for strength
+rzoom1  = gridsz / (2 * Sqrt(tdef.r_streMax) ) # S or T
+rzoom2  = gridsz / (4 * Sqrt(tdef.r_streMax) ) # BCP or BS
+rzoomc2 = gridsz / (2 * Sqrt(2 * tdef.r_streMax) ) # B)S
+rzoomc3 = gridsz / (2 * Sqrt(3 * tdef.r_streMax) ) # B)C)P
+
+# chain table
+tch = tall
+group tch.rnum tch.ch "first" tch.resNum "first"
+add column tch 1 name="cnt"
+group tch.ch tch.cnt "sum"
+add column tch tch.cnt * wres name="w"
+tch.w[Index(tch.w < wchmin)] = wchmin
+add column tch tch.w / tch.cnt name="wres"
+add column tch xchleft name="xleft"
+for i = 2, Nof(tch)
+  i1 = i - 1
+  tch.xleft[i] =  tch.xleft[i1] + tch.w[i1]
+endfor # i
+add column tch Schclr[2 - Mod(Count(Nof(tch) ) 2) ] name="clr"
+
+# residue table
+group table tmp tres.ch "ch" Sarray(tres.resNum) "resNum" tres.resOrig "res"
+add column tmp tmp.resNum name="rnum"
+tres = tmp
+delete tmp
+group table t tch.ch "ch" tch.wres "wres" tch.clr "clr"
+join left tres.ch t.ch name="tres"
+delete t
+# xcen
+add column tres xchleft name="xleft"
+for i = 2, Nof(tres)
+  i1 = i - 1
+  tres.xleft[i] =  tres.xleft[i1] + tres.wres[i1]
+endfor # i
+add column tres tres.xleft + (tres.wres / 2) name="xcen"
+# gaps
+ii = Index(tres.resNum ~ "*zz*")
+n = Nof(ii)
+if (n > 0) then
+  tres.resNum[ii] = Sarray(n "-")
+endif # n
+# requested residues without strong contacts
+ii = Index(tres.resNum ~ "*zy")
+if (Nof(ii) > 0) then
+  tres.resNum[ii] = Field(tres.resNum[ii] 1 "z")
+endif # ii
+# add lengthAdjust for long residue labels
+add column tres tres.wres / Rarray(Length(tres.resNum) ) name="lenperch"
+add column tres "" name="lenAdjust"
+ii = Index(tres.lenperch < gridsz / 3)
+n = Nof(ii)
+if (n > 0) then
+  tres.lenAdjust[ii] = Sarray(n " textLength=\"") + Sarray(0.9 * tres.wres[ii]) + Sarray(n "\" lengthAdjust=\"spacingAndGlyphs\"")
+endif # n
+
+# add mutations
+n = Nof(tmut)
+if (n > 0) then
+  add column tall Sarray(tall.ligcl) + Sarray(Nof(tall) "@") + tall.rnum name="sig"
+  rename tmut.res "mut"
+  add column tmut Sarray(tmut.ligcl) + Sarray(n "@") + tmut.rnum name="sig"
+  delete tmut.ligcl tmut.rnum
+  join left tall.sig tmut.sig name="tall"
+  delete tall.sig
+else
+  # no mutations
+  add column tall "" name="mut"
+endif # n
+delete tmut
+
+# add all group strengths for all elements of the table
+n = Nof(tall)
+S = Sarray(n "@")
+add column tall tall.split + S + tall.rnum + S + tall.ligcl name="sig"
+S = Stype // {"S"}
+for i = 1, Nof(S)
+  stype = S[i]
+  t = tall.type == stype
+  scol = "stre" + stype
+  group table tt t.sig "sig" t.stre scol
+  delete t
+  join left tall.sig tt.sig name="tall"
+  ii = Index(tall.$scol == Toreal("ND") )
+  if (Nof(ii) > 0) then
+    tall.$scol[ii] = 0.
+  endif # ii
+  delete tt
+endfor # i
+delete tall.sig
+
+# add string representation of contact strings in .1f format
+S = {"", "S"} // Stype
+for i = 1, Nof(S)
+  stype = S[i]
+  scol = "stre" + stype
+  sscol = "sstre" + stype
+  add column tall Sarray(Sarray(tall.$scol) 1 3) name=sscol
+  tall.$sscol = Replace(tall.$sscol "^0.0$" "0")
+  tall.$sscol = Replace(tall.$sscol "^0.$" "0")
+endfor # i
+
+# add title for all contacts
+# HTML title
+# A1-287 [all]
+# SVG titles
+# A1-287 [all] B 0. C 2.1 P 1.1
+# A1-287 [all] B 0. S 2.1
+# A1-287 [all] 2.1
+# A1-287 [all] 2.1
+n = Nof(tall)
+Sm = Sarray(n "-")
+Sb = Sarray(n " [")
+Sk = Sarray(n "]")
+Ss = Sarray(n " ")
+SB = Sarray(n " B ")
+SC = Sarray(n " C ")
+SP = Sarray(n " P ")
+SS = Sarray(n " S ")
+add column tall tall.ch + Sm + Replace(tall.resNum "zy" "") + Sb + tall.ligclss + Sk name="title"
+add column tall "" name="titleBCP"
+add column tall "" name="titleBS"
+add column tall "" name="titleS"
+add column tall "" name="titleT"
+tall.titleBCP = tall.title + SB + tall.sstreB + SC + tall.sstreC + SP + tall.sstreP
+tall.titleBS = tall.title + SB + tall.sstreB + SS + tall.sstreS
+tall.titleS = tall.title + Ss + tall.sstre
+tall.titleT = tall.title + Ss + tall.sstre
+
+# class for SVG circles
+n = Nof(tall)
+add column tall "" name="class"
+Sl = Sarray(n "spot l")
+Sr = Sarray(n " r")
+St = Sarray(n " t")
+Ss = Sarray(n " s")
+tall.class = Sl + Sarray(tall.ligcl)
+tall.class = tall.class + Sr + Replace(Sarray(tall.rnum) "-" "_")
+tall.class = tall.class + St + tall.type
+tall.class = tall.class + Ss + Replace(Sarray(tall.sstre) "." "_")
+
+# detect non-zero contact types for the residues
+t = tall
+add column t t.rnum + Sarray(Nof(t) "/") + t.type name="sig"
+group t.sig t.rnum "first" t.type "first" t.stre "max" t.sstre "refmax"
+add column t "" name="type0"
+ii = Index(t.sstre != "0")
+if (Nof(ii) > 0) then
+  t.type0[ii] = t.type[ii]
+endif # ii
+group t.rnum t.type0 "uniq,type"
+t.type = Replace(t.type "," "")
+join left tres.rnum t.rnum name="tres"
+delete t
+
+# add xcen SVG coordinates
+group table t tres.rnum "rnum" tres.xcen "xcen"
+join left tall.rnum t.rnum name="tall"
+delete t
+
+# calculate ycen SVG coordinates for all orders
+n = Nof(tall)
+I = Iarray(n gridsz / 2 + hchfill) # chain header + half of row height
+add column tall I + tall.oBCP * gridsz name="ycenBCP"
+add column tall I + tall.oBS * gridsz name="ycenBS"
+add column tall I + tall.oS * gridsz name="ycenS"
+add column tall I + tall.oT * gridsz name="ycenT"
+add column tall I + tall.oob * gridsz name="ycenob"
+
+# calculate radii
+# r1  :: S and T
+# r2  :: BCP and BS
+# rc2 :: B)S
+# rc3 :: B)C)P
+add column tall rzoom1 * Sqrt(0.5 * tall.stre) name="r1" # S is normalized as T
+add column tall rzoom2 * Sqrt(tall.stre) name="r2"
+ii = Index(tall.type == "T")
+if (Nof(ii) > 0) then
+  tall.r2[ii] = rzoom2 * Sqrt(0.5 * tall.stre[ii] )
+endif # ii
+add column tall rzoomc2 * Sqrt(tall.stre) name="rc2"
+ii = Index(tall.split == "BS" & tall.type == "S")
+if (Nof(ii) > 0) then
+  tall.rc2[ii] = rzoomc2 * Sqrt(tall.streB[ii] + tall.streS[ii] )
+endif # ii
+add column tall rzoomc3 * Sqrt(tall.stre) name="rc3"
+ii = Index(tall.split == "BCP" & tall.type == "C")
+if (Nof(ii) > 0) then
+  tall.rc3[ii] = rzoomc3 * Sqrt(tall.streB[ii] + tall.streC[ii] )
+endif # ii
+ii = Index(tall.split == "BCP" & tall.type == "P")
+if (Nof(ii) > 0) then
+  tall.rc3[ii] = rzoomc3 * Sqrt(tall.streB[ii] + tall.streC[ii] + tall.streP[ii] )
+endif # ii
+# remove noise
+ii = Index(tall.stre < tdef.r_streMin)
+n = Nof(ii)
+if (n > 0) then
+  R = Rarray(n)
+  tall.r1[ii] = R
+  tall.r2[ii] = R
+  tall.rc2[ii] = R
+  tall.rc3[ii] = R
+endif # n
+
+# shifts relative to the center of the grid cell
+# BCPc, BSc, S, T
+add column tall 0 name="xsh0"
+add column tall 0 name="ysh0"
+# BS and BCP
+add column tall 0 name="xsh2"
+add column tall 0 name="ysh2"
+add column tall 0 name="xsh3"
+add column tall 0 name="ysh3"
+ii = Index(tall.type == "B")
+n = Nof(ii)
+if (n > 0) then
+  tall.xsh2[ii] = -Iarray(n gridsz / 4)
+  # tall.ysh3[ii] = -Iarray(n gridsz / 4)
+  # tall.ysh3[ii] = -Iarray(n Integer( (gridsz / 4.) * (2. / Sqrt(3.) ) ) )
+  tall.ysh3[ii] = -Iarray(n Integer( (gridsz / 4.) * (Sqrt(3.) / 2.) ) )
+endif # n
+ii = Index(tall.type == "C")
+n = Nof(ii)
+if (n > 0) then
+  tall.xsh3[ii] = -Iarray(n gridsz / 4)
+  # tall.ysh3[ii] = Iarray(n gridsz / 4)
+  # tall.ysh3[ii] = Iarray(n Integer( (gridsz / 4.) * (1. / Sqrt(3.) ) ) )
+  tall.ysh3[ii] = Iarray(n Integer( (gridsz / 4.) * (Sqrt(3.) / 2.) ) )
+endif # n
+ii = Index(tall.type == "P")
+n = Nof(ii)
+if (n > 0) then
+  tall.xsh3[ii] = Iarray(n gridsz / 4)
+  # tall.ysh3[ii] = Iarray(n gridsz / 4)
+  # tall.ysh3[ii] = Iarray(n Integer( (gridsz / 4.) * (1. / Sqrt(3.) ) ) )
+  tall.ysh3[ii] = Iarray(n Integer( (gridsz / 4.) * (Sqrt(3.) / 2.) ) )
+endif # n
+ii = Index(tall.type == "S")
+n = Nof(ii)
+if (n > 0) then
+  tall.xsh2[ii] = Iarray(n gridsz / 4)
+endif # n
+
+# at this point tables tall, tch and tres have all required data
+
+# SVG creation macro ###########################################################
+
+macro startSVG s_id
+  l_commands = l_debug
+  s_svgheader = """<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="REPLACEW" height="REPLACEH" viewBox="0 0 REPLACEW REPLACEH">"""
+  # create inner svg
+  s_svg = """
+
+<g id="REPLACEID" style="display:block;">
+<title>Contact strength map</title>
+<style>
+/* <![CDATA[ */
+  g.stre circle:hover {
+    stroke: black;
+    stroke-width: 1px;
+  }
+  g.stre_C circle:hover {
+    stroke: red;
+  }
+  g.ligand_labels text:hover {
+    fill: red;
+  }
+/* ]]> */
+</style>
+<g class="plot" style="font-family:sans-serif;font-size:13px;text-anchor:middle;dominant-baseline:central;stroke-width:0;">
+<g class="header">
+"""
+  # total dimensions
+  wtotal = Max(Iarray(tch.xleft) + Iarray(tch.w) )
+  htotal = hchfill + (ligclmax + 1) * gridsz # + 1 for ensemble
+  s_svg = Replace(s_svg "REPLACEID" s_id)
+  s_svgheader = Replace(s_svgheader "REPLACEW" String(wtotal) )
+  s_svgheader = Replace(s_svgheader "REPLACEH" String(htotal) )
+  keep s_svg s_svgheader wtotal
+endmacro # startSVG
+
+macro mkSVGlegend s_split
+  s_svg += "<g class=\"legend\" style=\"fill:#000000;text-anchor:start;\">\n"
+  S1 = Stype // Stypea
+  S2 = StypeWord // StypeaWord
+  S3 = StypeTitle // StypeaTitle
+  S4 = StypeClr // StypeaClr
+  group table t S1 "type" S2 "word" S3 "title" S4 "clr"
+  delete t.type != Split(s_split "")
+  n = Nof(t)
+  ygridlegend = hchfill / n
+  rlegend = hchfill / 6
+  add column t rlegend name="xcen"
+  add column t Count(n) * ygridlegend - ygridlegend / 2 name="ycen"
+  add column t rlegend name="r"
+  # horizontal shift of the text relative to the centers of the circles
+  xshift = -3 # good for BCP
+  # <circle cx="10" cy="10" r="10." style="fill:#ffa500;"><title>Backbone</title></circle>
+  # <text x="10" y="10" style="dominant-baseline:central;"><title>Backbone</title>Backbone</text>
+  add column t "" name="svg"
+  t.svg = t.svg + Sarray(n "<circle cx=\"")
+  t.svg = t.svg + Sarray(t.xcen)
+  t.svg = t.svg + Sarray(n "\" cy=\"")
+  t.svg = t.svg + Sarray(t.ycen)
+  t.svg = t.svg + Sarray(n "\" r=\"")
+  t.svg = t.svg + Replace(Sarray(t.r) ".$" "")
+  t.svg = t.svg + Sarray(n "\" style=\"fill:")
+  t.svg = t.svg + t.clr
+  t.svg = t.svg + Sarray(n ";\"><title>")
+  t.svg = t.svg + t.title
+  t.svg = t.svg + Sarray(n "</title></circle>\n<text x=\"")
+  t.xcen = t.xcen + xshift
+  t.svg = t.svg + Sarray(t.xcen)
+  t.svg = t.svg + Sarray(n "\" y=\"")
+  t.svg = t.svg + Sarray(t.ycen)
+  t.svg = t.svg + Sarray(n "\" style=\"dominant-baseline:central;\"><title>")
+  t.svg = t.svg + t.title
+  t.svg = t.svg + Sarray(n "</title>")
+  t.svg = t.svg + t.word
+  t.svg = t.svg + Sarray(n "</text>")
+  # end group legend
+  s_svg += Sum(t.svg "\n") + "\n</g>\n"
+  keep s_svg
+endmacro # mkSVGlegend
+
+macro ch2SVG
+  l_commands = l_debug
+  s_svg = "<g class=\"chains\">\n"
+  # <rect x="128" y="0" width="1824" height="32" style="fill:#ABFCAB;"/>
+  # <text x="1040" y="16" style="dominant-baseline:central;">chain A1</text>
+  t = tch
+  n = Nof(t)
+  add column t "<rect x=\"" name="svg"
+  t.svg = t.svg + Sarray(t.xleft)
+  t.svg = t.svg + Sarray(n "\" y=\"0\" width=\"")
+  t.svg = t.svg + Sarray(t.w)
+  t.svg = t.svg + Sarray(n "\" height=\"" + String(hchfill) + "\" style=\"fill:")
+  t.svg = t.svg + t.clr
+  t.svg = t.svg + Sarray(n ";\"/>\n<text x=\"")
+  t.svg = t.svg + Sarray(t.xleft + t.w / 2) # center
+  t.svg = t.svg + Sarray(n "\" y=\"" + String(ychcen) + "\" style=\"dominant-baseline:central;\">chain ")
+  t.svg = t.svg + t.ch
+  t.svg = t.svg + Sarray(n "</text>")
+  # end chains group
+  s_svg += Sum(t.svg "\n") + "\n</g>\n"
+  keep s_svg
+endmacro # ch2SVG
+
+macro res2SVG
+  l_commands = l_debug
+  s_svg = "<g class=\"residue_labels\" style=\"fill:#000000;\">\n"
+  t = tres
+  n = Nof(t)
+  # <text x="144" y="32" style="dominant-baseline:central;">R</text>
+  # <text x="144" y="56" style="dominant-baseline:central;">254</text>
+  add column t "<text x=\"" name="svg"
+  t.svg = t.svg + Sarray(t.xcen)
+  t.svg = t.svg + Sarray(n "\" y=\"")
+  t.svg = t.svg + Sarray(n String(yrescen) )
+  t.svg = t.svg + Sarray(n "\" style=\"dominant-baseline:central;\">")
+  t.svg = t.svg + t.res
+  t.svg = t.svg + Sarray(n "</text>\n<text x=\"")
+  t.svg = t.svg + Sarray(t.xcen)
+  t.svg = t.svg + Sarray(n "\" y=\"")
+  t.svg = t.svg + Sarray(n String(yresNumcen) )
+  t.svg = t.svg + Sarray(n "\" style=\"dominant-baseline:central;\"")
+  t.svg = t.svg + t.lenAdjust
+  t.svg = t.svg + Sarray(n ">")
+  t.svg = t.svg + t.resNum
+  t.svg = t.svg + Sarray(n "</text>")
+  # end residue_labels group
+  s_svg += Sum(t.svg "\n") + "\n</g>\n"
+  keep s_svg
+endmacro # res2SVG
+
+# writes contact strength to SVG format
+# depends on tall table
+# input: s_order s_rcol s_shcol s_split
+# output: s_svg
+macro stre2SVG s_order s_rcol s_shcol s_split
+  l_commands = l_debug
+
+  srcol = "r" + s_rcol
+  sxshcol = "xsh" + s_shcol
+  syshcol = "ysh" + s_shcol
+  sycencol = "ycen" + s_order
+  sfpclcol = "fpcl" + s_split
+  stitlecol = "title" + s_split
+
+  s_svg = "<g class=\"stre\">\n<g class=\"ligand_labels\" style=\"fill:#000000;\" cursor=\"default\">\n"
+
+  t = tall.split == s_split
+  group t.ligcl t.ligclss "first" t.$sycencol "first,ycen" t.$sfpclcol "first,fpcl"
+  join left t.ligcl tligcl.ligcl name="t"
+  sort t.fpcl
+
+  # <text x="64" y="80" style="dominant-baseline:central;" class="ligcl sBCP l1">all</text>
+  n = Nof(t)
+  xcen = xchleft / 2
+  add column t "<text x=\"" + String(xcen) + "\" y=\"" name="svg"
+  add column t "" name="textLength"
+  ii = Index(t.long == 1)
+  ni = Nof(ii)
+  if (ni > 0) then
+    t.textLength[ii] = Sarray(ni " textLength=\"" + String(xchleft) + "\"")
+  endif # ni
+  add column t "ligcl s" + s_split + " l" name="class"
+  t.class = t.class + t.ligcl
+  t.svg = t.svg + Sarray(t.ycen)
+  t.svg = t.svg + Sarray(n "\" style=\"dominant-baseline:central;")
+  # make ensemble bold
+  t.svg[1] = t.svg[1] + "font-weight:bold;"
+  t.svg = t.svg + Sarray(n "\" class=\"")
+  t.svg = t.svg + t.class
+  t.svg = t.svg + Sarray(n "\"")
+  t.svg = t.svg + t.textLength
+  t.svg = t.svg + Sarray(n "><title>")
+  t.svg = t.svg + t.ligcls
+  t.svg = t.svg + Sarray(n "</title>")
+  t.svg = t.svg + t.ligclss
+  t.svg = t.svg + Sarray(n "</text>")
+  # end ligand_labels group
+  s_svg += Sum(t.svg "\n") + "\n</g>\n"
+
+  # horizontal lines for ensemble / fpcl
+  t.svg = Sarray(n "")
+  delete t.textLength
+  I = t.fpcl[2:$] // Iarray(1 t.fpcl[$] )
+  add column t I - t.fpcl name="fpcld"
+  delete t.fpcld == 0
+  if (s_order == "ob") then ; delete t.ligcl != 0 ; endif
+  s_svg += "<g class=\"fpcl_borders\" style=\"stroke:#cccccc;stroke-width:1\">\n"
+  # <line x1="0" y1="80" x2="1000" y2="80" stroke-width="1"/>
+  n = Nof(t)
+  add column t t.ycen + (gridsz / 2) - 1 name="y1"
+  t.svg = t.svg + Sarray(n "<line x1=\"0\" y1=\"")
+  t.svg = t.svg + Sarray(t.y1)
+  t.svg = t.svg + Sarray(n "\" x2=\"" + String(wtotal) + "\" y2=\"")
+  t.svg = t.svg + Sarray(t.y1)
+  t.svg = t.svg + Sarray(n "\"/>")
+  s_svg += Sum(t.svg "\n") + "\n</g>\n"
+  delete t
+ 
+  # connecting arcs
+  if (s_rcol !~ "c*" & (s_split == "BS" | s_split == "BCP") ) then
+    t = tall.$srcol > 0.0 & tall.split == s_split
+    add column t Sarray(t.ligcl) + Sarray(Nof(t) "@") + t.rnum name="sig"
+    group t.sig t.$sycencol "first,ycen" t.xcen "first"
+    s_svg += "<g class=\"stre_connectors\" style=\"stroke:#cccccc;stroke-width:1;fill:none;\">"
+    # <path d="M 80 80 m 16 0 a 8 8 0 1 1 16 0"/>
+    if (s_split == "BS") then
+      sxsh = String(-gridsz / 4)
+      sysh = "0"
+      srx = String(gridsz / 4)
+      sry = srx
+      sxrot = "0"
+      slarge = "1"
+      spos = "0"
+      sdx = String(gridsz / 2)
+      sdy = "0"
+    endif # BS
+    if (s_split == "BCP") then
+      sxsh = "0"
+      # the radius of the circumscribed circle for the equilateral triangle is R = a / Sqrt(3)
+      # the triangle is not centered by its geometrical center,
+      # rather xcen ycen is the middle of the vertical altitude (a / (2 Sqrt(3) ) from the top vertex)
+      # in SVG coordinates: a = gridsz / 4
+      sysh = String(Integer( (-gridsz / 4.) * (Sqrt(3.) / 2.) ) )
+      srx = String(Integer(gridsz / (2. * Sqrt(3.) ) ) )
+      sry = srx
+      sxrot = "0"
+      slarge = "1"
+      spos = "0"
+      sdx = String(gridsz / 4)
+      sdy = String(Integer(gridsz * Sqrt(3.) / 4.) )
+    endif # BCP
+    spath = "m " + sxsh + " " + sysh + " a " + srx + " " + sry + " " + sxrot + " " + slarge + " " + spos + " " + sdx + " " + sdy
+    n = Nof(t)
+    add column t "" name="svg"
+    t.svg = t.svg + Sarray(n "<path d=\"M")
+    t.svg = t.svg + Sarray(t.xcen)
+    t.svg = t.svg + Sarray(n " ")
+    t.svg = t.svg + Sarray(t.ycen)
+    t.svg = t.svg + Sarray(n " " + spath + "\"/>")
+    s_svg += Sum(t.svg "\n") + "\n</g>\n"
+    delete t
+  endif # BS
+
+  t = tall.$srcol > 0.0 & tall.split == s_split
+  n = Nof(t)
+  # <circle cx="432" cy="2160" r="3.075842" style="fill:#fff0d5;" class="l0 r1 tB"><title>A1-287 [all] B 0 C 2.7 P 0.1</title></circle>
+  add column t "<circle cx=\"" name="svg"
+  t.svg = t.svg + Sarray(t.xcen + t.$sxshcol)
+  t.svg = t.svg + Sarray(n "\" cy=\"")
+  t.svg = t.svg + Sarray(t.$sycencol + t.$syshcol)
+  t.svg = t.svg + Sarray(n "\" r=\"" )
+  t.svg = t.svg + Replace(Sarray(t.$srcol) ".$" "")
+  t.svg = t.svg + Sarray(n "\" style=\"fill:")
+  t.svg = t.svg + t.clr
+  t.svg = t.svg + Sarray(n ";\" class=\"")
+  t.svg = t.svg + t.class
+  t.svg = t.svg + Sarray(n "\"><title>")
+  t.svg = t.svg + t.$stitlecol
+  t.svg = t.svg + Sarray(n "</title></circle>")
+
+  S = Split(s_split "")
+  for i = Nof(S), 1, -1
+    stype = S[i]
+    ii = Index(t.type == stype)
+    if (Nof(ii) > 0) then
+      s_svg += "<g class=\"stre_" + stype + "\">\n"
+      s_svg += Sum(t.svg[ii] "\n") + "\n</g>\n"
+    endif # ii
+  endfor # i
+  delete t
+
+  t = tall.mut != ""
+  if (Nof(t) > 0) then
+    add column t t.rnum + Sarray(Nof(t) "@") + Sarray(t.ligcl) name="sig"
+    group t.sig all "first"
+    n = Nof(t)
+    # <text x="432" y="2160" style="dominant-baseline:central;"><title>A1-287 [all] B 0 C 2.7 P 0.1</title>X</text>
+    shift = - gridsz / 3
+    add column t "<text x=\"" name="svg"
+    t.svg = t.svg + Sarray(t.xcen + shift)
+    t.svg = t.svg + Sarray(n "\" y=\"")
+    t.svg = t.svg + Sarray(t.$sycencol + shift)
+    t.svg = t.svg + Sarray(n "\" style=\"dominant-baseline:central;\"><title>")
+    t.svg = t.svg + t.$stitlecol
+    t.svg = t.svg + Sarray(n "</title>")
+    t.svg = t.svg + t.mut
+    t.svg = t.svg + Sarray(n "</text>")
+    s_svg += "<g class=\"mut\" style=\"font-size:10px;\">\n" + Sum(t.svg "\n") + "\n</g>\n"
+  endif # t
+  delete t
+  
+  # end group stre
+  s_svg += "</g>\n"
+
+  keep s_svg
+endmacro # stre2SVG
+
+macro mkSVG s_mode l_ob
+  l_commands = l_debug
+  sid = "svg_"
+  if (l_ob) then
+    sid += "ob"
+  else
+    sid += "cl"
+  endif # l_ob
+  sid += "_" + s_mode
+  startSVG sid # s_svg s_svgheader
+  ssvg = s_svg
+  s = Replace(s_mode "c" "")
+  mkSVGlegend s # s_svg
+  ssvg += s_svg
+  ch2SVG # s_svg
+  ssvg += s_svg
+  res2SVG # s_svg
+  # end header group
+  ssvg += s_svg + "</g>\n"
+  # default mode: BCPc
+  ssort = "BCP"
+  sr = "c3"
+  ssh = "0"
+  stitle = "BCP"
+  if (s_mode == "BCP") then
+    ssort = "BCP"
+    sr = "2"
+    ssh = "3"
+    stitle = "BCP"
+  endif # BCP
+  if (s_mode == "BSc") then
+    ssort = "BS"
+    sr = "c2"
+    ssh = "0"
+    stitle = "BS"
+  endif # BSc
+  if (s_mode == "BS") then
+    ssort = "BS"
+    sr = "2"
+    ssh = "2"
+    stitle = "BS"
+  endif # BS
+  if (s_mode == "S") then
+    ssort = "S"
+    sr = "1"
+    ssh = "0"
+    stitle = "S"
+  endif # S
+  if (s_mode == "T") then
+    ssort = "T"
+    sr = "1"
+    ssh = "0"
+    stitle = "T"
+  endif # T
+  if (l_ob) then ; ssort = "ob" ; endif
+  stre2SVG ssort sr ssh stitle
+  ssvg += s_svg
+  # end plot group, end id group
+  ssvg += "</g>\n</g>\n"
+  s_svg = ssvg
+  keep s_svg s_svgheader
+endmacro # mkSVG
+
+# HTML creation macro ###########################################################
+
+macro mkHTMLlegend s_split
+  l_commands = l_debug
+  # s_legend = "<div><p>A</p><p>B</p></div>"
+  group table t Stype // Stypea "type" StypeWord // StypeaWord "word" StypeTitle // StypeaTitle "title" StypeClr // StypeaClr "clr"
+  delete t.type != Split(s_split "")
+  add column t "" name="html"
+  n = Nof(t)
+  t.html = t.html + Sarray(n "<span style=\"display:block;background-color:")
+  t.html = t.html + t.clr
+  t.html = t.html + Sarray(n ";\" title=\"")
+  t.html = t.html + t.title
+  t.html = t.html + Sarray(n "\">")
+  t.html = t.html + t.word
+  t.html = t.html + Sarray(n "</span>")
+  s_legend = "<div style=\"text-align:left;\">" + Sum(t.html "\n") + "</div>"
+  keep s_legend
+endmacro # mkHTMLlegend
+
+macro startHTML s_split l_ob
+  l_commands = l_debug
+  sid = "thtml_"
+  if (l_ob) then
+    sid += "ob"
+  else
+    sid += "cl"
+  endif # l_ob
+  sid += "_" + s_split
+  s_html  = "<table id=\"" + sid
+  s_html += "\" style=\"text-align:center;color:black;display:table;border-width:0px;border-spacing:0px;\">"
+  mkHTMLlegend s_split # s_legend
+  s_html += "\n<thead>\n<tr>\n<td rowspan=\"3\" style=\"padding:0px;\">" + s_legend + "</td>\n"
+  keep s_html
+endmacro # startHTML
+
+macro ch2HTML s_split
+  l_commands = l_debug
+# <th colspan="144" style="color:black;background-color:#ABFCAB;">chain A1</th>
+  t = tch
+  n = Nof(t)
+  ntypes = Length(s_split) + 1 # +1 for mutation
+  add column t "<th colspan=\"" name="html"
+  t.html = t.html + Sarray(ntypes * t.cnt)
+  t.html = t.html + Sarray(n "\" style=\"background-color:")
+  t.html = t.html + t.clr
+  t.html = t.html + Sarray(n ";\">chain ")
+  t.html = t.html + t.ch
+  t.html = t.html + Sarray(n "</th>")
+  s_html = Sum(t.html "\n") + "\n</tr>\n"
+  keep s_html
+endmacro # ch2HTML
+
+macro res2HTML s_split
+  l_commands = l_debug
+  s_html = "<tr>\n"
+  # residue row
+  # <td colspan="3" style="border-right:solid 1px #000000;">254</td>
+  t = tres
+  n = Nof(t)
+  scolspan = String(Length(s_split) + 1) # +1 for mutation
+  add column t "" name="style"
+  add column t "" name="html"
+  t.html = t.html + Sarray(n "<td colspan=\"" + scolspan + "\" style=\"")
+  # border
+  t.style = t.style + Sarray(n "border-right:solid 1px #000000;")
+  t.style[n] = ""
+  t.html = t.html + t.style
+  # chain color
+  t.style = Sarray(n "background-color:")
+  t.style = t.style + t.clr
+  t.html = t.html + t.style
+  t.html = t.html + Sarray(n ";\">")
+  # residue code + residue number
+  t.html = t.html + t.res + t.resNum
+  t.html = t.html + Sarray(n "</td>")
+  # residue row is ready
+  s_html += Sum(t.html "\n") + "\n</tr>\n<tr>\n"
+  # contact type row
+  # add mutation column
+  t.html = Sarray(n "<td style=\"background-color:") + t.clr + Sarray(n ";\"></td>")
+  # add types columns
+  S = Split(s_split "")
+  add column t "" name="html2"
+  ntypes = Nof(S)
+  for i = 1, ntypes
+    t.html2 = Sarray(n "")
+    t.style = Sarray(n "")
+    stype = S[i]
+    ii = Index(t.type ~ "*" + stype + "*")
+    ni = Nof(ii)
+    if (ni > 0) then
+      t.html2[ii] = Sarray(ni stype)
+    endif # ni
+    if (i == ntypes) then
+      t.style = Sarray(n "border-right:solid 1px #000000;")
+      t.style[n] = "" # remove border from the last residue
+    endif # i
+    t.style = t.style + Sarray(n "background-color:") + t.clr
+    t.html = t.html + Sarray(n "<td style=\"") + t.style + Sarray(n ";\">") + t.html2 + Sarray(n "</td>")
+  endfor # i
+  s_html += Sum(t.html "\n") + "\n</tr>\n</thead>"
+  keep s_html
+endmacro # res2HTML
+
+# writes contact strength to HTML format
+# depends on tall table that must be properly sorted (HTML has no coordinates)
+# output: s_html
+macro stre2HTML s_split
+  l_commands = l_debug
+  t = tall.split == s_split
+  # detect change of the ligand cluster
+  I = Iarray(1, -1) // t.ligcl[1:$-1]
+  add column t t.ligcl - I name="ligcld"
+  ii = Index(t.ligcld != 0) # start of new ligcl
+  add column t "" name="html"
+  n = Nof(ii)
+  tmp = t[ii]
+  join left tmp.ligcl tligcl.ligcl name="tmp"
+  t.html[ii] = t.html[ii] + Sarray(n "</tr>\n<tr><td title=\"")
+  t.html[ii] = t.html[ii] + tmp.ligcls
+  t.html[ii] = t.html[ii] + Sarray(n "\">")
+  t.html[ii] = t.html[ii] + t.ligclss[ii]
+  t.html[ii] = t.html[ii] + Sarray(n "</td>\n")
+  # first row is special
+  t.html[1] = "<tr style=\"font-weight:bold;\"><td title=\"" + tmp.ligcls[1] + "\">" + t.ligclss[1] + "</td>\n"
+  # add mutations
+  add column t "" name="htmlmut"
+  ii = Index(t.mut != "" & t.type == s_split[1])
+  n = Nof(ii)
+  if (n > 0) then
+    t.htmlmut[ii] = Sarray(n "<td>") + t.mut[ii] + Sarray(n "</td>")
+  endif # n
+  ii = Index(t.mut == "" & t.type == s_split[1])
+  n = Nof(ii)
+  if (n > 0) then
+    t.htmlmut[ii] = Sarray(n "<td style=\"padding:0px;width:0px;\"></td>")
+  endif # n
+  t.html = t.html + t.htmlmut
+  # add non-zero stre
+  ii = Index(t.sstre != "0")
+  n = Nof(ii)
+  if (n > 0) then
+    t.html[ii] = t.html[ii] + Sarray(n "<td style=\"background-color:")
+    t.html[ii] = t.html[ii] + t.clr[ii]
+    t.html[ii] = t.html[ii] + Sarray(n ";\" title=\"")
+    t.html[ii] = t.html[ii] + t.title[ii]
+    t.html[ii] = t.html[ii] + Sarray(n "\">")
+    t.html[ii] = t.html[ii] + t.sstre[ii]
+    t.html[ii] = t.html[ii] + Sarray(n "</td>")
+  endif # n
+  # add zero stre
+  ii = Index(t.sstre == "0")
+  n = Nof(ii)
+  if (n > 0) then
+    t.html[ii] = t.html[ii] + Sarray(n "<td style=\"padding:0px;width:0px;\"></td>")
+  endif # n
+  s_html = Sum(t.html "\n") + "\n</tr>\n"
+  keep s_html
+endmacro # stre2HTML
+
+macro mkHTML s_split l_ob
+  l_commands = l_debug
+  startHTML s_split l_ob # s_html
+  shtml = s_html
+  ch2HTML s_split # s_html
+  shtml += s_html
+  res2HTML s_split # s_html
+  shtml += s_html
+  socol = "o" + s_split
+  if (l_ob) then ; socol = "oob" ; endif
+  sort tall.split tall.$socol number tall.rnum tall.rnum tall.type
+  stre2HTML s_split # s_html
+  shtml += s_html
+  shtml += "</table>"
+  s_html = shtml
+  keep s_html
+endmacro # mkHTML
+
+# TSV creation macro ###########################################################
+
+macro writeTSV s_otsv
+  l_commands = l_debug
+  sort tall.split tall.oBCP number tall.rnum tall.rnum tall.type
+  group table t tall.split "split" tall.oBCP "oBCP" tall.fpclBCP "cBCP" tall.oBS "oBS" tall.fpclBS "cBS" tall.oS "oS" tall.fpclS "cS" tall.oT "oT" tall.fpclT "cT" tall.oob "oob" tall.ligcl "clig" tall.ch "ch" tall.resNum "res" tall.type "type" tall.sstre "stre"
+  t.res[Index(t.res ~ "*zz*") ] = "-"
+  t.res = Replace(t.res "zy" "")
+  write table separator="\t" header t s_otsv delete
+  delete t
+  read string s_otsv name="stsv"
+  sheader = """
+# split :: mode of residue split: BCP | BS | S | T
+# oBCP  :: rank of the ligand cluster by BCP-contact cluster order
+# cBCP  :: BCP-contact cluster number
+# oBS   :: rank of the ligand cluster by BS-contact cluster order
+# cBS   :: BS-contact cluster number
+# oS    :: rank of the ligand cluster by S-contact cluster order
+# cS    :: S-contact cluster number
+# oT    :: rank of the ligand cluster by T-contact cluster order
+# cT    :: T-contact cluster number
+# oob   :: rank of the ligand cluster by object order
+# clig  :: ligand cluster number
+# ch    :: protein chain
+# res   :: residue number (or '-' for gaps)
+# type  :: type of the contact
+# stre  :: contact strength with 0.1 precision
+# rank 0 / cluster number 0 represents weighted ensemble
+#
+# list of the ligands for each ligand cluster:
+"""
+  n = Nof(tligcl)
+  sheader += Sum(Sarray(n "# ") + Sarray(tligcl.ligcl) + Sarray(Nof(tligcl) " ") + tligcl.ligcls "\n")
+  stsv = sheader + "\n" + stsv
+  write string stsv s_otsv delete
+endmacro # writeCSV
+
+# produce files ################################################################
+
+Ssortob = {"no", "yes"}
+Ssort   = {"cl", "ob"}
+
+if (osvg != "s_") then
+  sxmlheader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+  ssvgheader = ""
+  Ssvgmode = {"BCPc", "BCP", "BSc", "BS", "S", "T"}
+  ssvgall = ""
+  sfsvgroot = Path(osvg) + Name(osvg) + "_"
+  l_1 = yes # default view: cl_BCPc
+  for i = 1, Nof(Ssortob)
+    ssortob = Ssortob[i]
+    l_ob = $ssortob
+    ssort = Ssort[i]
+    for j = 1, Nof(Ssvgmode)
+      ssvgmode = Ssvgmode[j]
+      mkSVG ssvgmode l_ob # s_svg s_svgheader
+      if (l_1) then
+        ssvgall += s_svg
+        ssvgheader = s_svgheader # should be the same for all SVGs
+      else
+        ssvgall += Replace(s_svg "display:block;" "display:none;")
+      endif # l_1
+      l_1 = no
+      ssvg = sxmlheader + s_svgheader + s_svg + "</svg>"
+      fsvg = sfsvgroot + ssort + "_" + ssvgmode + ".svg"
+      write string ssvg fsvg delete
+    endfor # j
+  endfor # i
+  ssvgall = sxmlheader + ssvgheader + ssvgall + "</svg>"
+  write string ssvgall osvg delete
+endif # osvg
+
+if (ohtml != "s_") then
+  shtml = ""
+  l_1 = yes # default view: cl_BCPc
+  for i = 1, Nof(Ssortob)
+    ssortob = Ssortob[i]
+    l_ob = $ssortob
+    ssort = Ssort[i]
+    for j = 1, Nof(Ssplit)
+      ssplit = Ssplit[j]
+      mkHTML ssplit l_ob # s_html
+      if (l_1) then
+        shtml += s_html
+      else
+        shtml += Replace(s_html "display:table;" "display:none;")
+      endif # l_1
+      l_1 = no
+    endfor # j
+  endfor # i
+  write string shtml ohtml delete
+endif # ohtml
+
+if (otsv != "s_") then ; writeTSV otsv ; endif
+
+if (l_debug) then ; write binary all "debugweb.icb" delete ; endif
+
+l_info = yes # get session info
+quit
+

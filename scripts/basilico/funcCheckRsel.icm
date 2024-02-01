@@ -1,0 +1,23 @@
+# outputs "" or valid selection
+function CheckRsel s_rsel
+  l_commands = l_debug
+  # filter user input
+  AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  digits = "0123456789"
+  alphanum = AZ + digits
+  # valid pattern:
+  # selection        :: residueSelection('|'residueSelection)*
+  # residueSelection :: chain/residueNumbers
+  # chain            :: [A-Z][0-9]+
+  # residueNumbers   :: residueNumber(,residueNumber)*
+  # residueNumber    :: [0-9]+|-
+  chainFilter = "[" + AZ + "][" + digits + "]+"
+  residueNumberFilter = "([" + digits + "]+|-)"
+  residueNumbersFilter = residueNumberFilter + "(," + residueNumberFilter + ")*"
+  residueSelectionFilter = chainFilter + "/" + residueNumbersFilter
+  selectionFilter = residueSelectionFilter + "(\|" + residueSelectionFilter + ")*"
+  # spaces are ignored
+  ssel = Replace(s_rsel " " "")
+  ssel = Match(ssel selectionFilter)
+  return ssel
+endfunction # CheckRsel

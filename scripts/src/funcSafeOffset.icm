@@ -1,0 +1,20 @@
+# calculates safe offset step to renumber residues of multiple chains
+function SafeOffset
+  l_showResCodeInSelection = no
+  group table T_out Sarray(a_*.A/ residue) "rsel"
+  add column T_out Field(T_out.rsel 2 "/") name="rsNum"
+  add column T_out Iarray(T_out.rsNum) name="i"
+  add column T_out Replace(T_out.rsNum "[0-9]+" "" regexp) name="ins"
+  maxLen = Max(T_out.i)
+  offsetStep = maxLen
+  # "normal" residues
+  delete T_out.ins == "" & T_out.i > 0 & T_out.i <= maxLen
+  if (Nof(T_out) > 0) then
+    add column T_out 1 name="cnt"
+    add column T_out Field(T_out.rsel 1 ".") name="obNm"
+    group T_out.obNm T_out.cnt "sum"
+    offsetStep += Max(T_out.cnt)
+  endif # T_out
+  return offsetStep
+endfunction # SafeOffset
+

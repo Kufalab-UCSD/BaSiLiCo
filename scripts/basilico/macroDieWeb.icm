@@ -1,0 +1,10 @@
+macro die s_ l_notAnError (no) auto
+  l_commands = no
+  l_info = l_commands
+  if (l_notAnError) then
+    ">>> " + s_
+  else
+    "Error" + ": " + s_
+  endif # l_notAnError
+  quit
+endmacro

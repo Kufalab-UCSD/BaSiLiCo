@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="1248" height="576" viewBox="0 0 1248 576">
+<g id="svg_ob_T" style="display:block;">
+<title>Contact strength map</title>
+<style>
+/* <![CDATA[ */
+  g.stre circle:hover {
+    stroke: black;
+    stroke-width: 1px;
+  }
+  g.stre_C circle:hover {
+    stroke: red;
+  }
+  g.ligand_labels text:hover {
+    fill: red;
+  }
+/* ]]> */
+</style>
+<g class="plot" style="font-family:sans-serif;font-size:13px;text-anchor:middle;dominant-baseline:central;stroke-width:0;">
+<g class="header">
+<g class="legend" style="fill:#000000;text-anchor:start;">
+<circle cx="10" cy="32" r="10" style="fill:#008000;"><title>Residue contact</title></circle>
+<text x="7" y="32" style="dominant-baseline:central;"><title>Residue contact</title>Total</text>
+</g>
+<g class="chains">
+<rect x="96" y="0" width="1152" height="64" style="fill:#ABFCAB;"/>
+<text x="672" y="10" style="dominant-baseline:central;">chain A1</text>
+</g>
+<g class="residue_labels" style="fill:#000000;">
+<text x="112" y="32" style="dominant-baseline:central;">H</text>
+<text x="112" y="53" style="dominant-baseline:central;">1</text>
+<text x="144" y="32" style="dominant-baseline:central;">K</text>
+<text x="144" y="53" style="dominant-baseline:central;">2</text>
+<text x="176" y="32" style="dominant-baseline:central;">L</text>
+<text x="176" y="53" style="dominant-baseline:central;">3</text>
+<text x="208" y="32" style="dominant-baseline:central;">G</text>
+<text x="208" y="53" style="dominant-baseline:central;">4</text>
+<text x="240" y="32" style="dominant-baseline:central;">G</text>
+<text x="240" y="53" style="dominant-baseline:central;">5</text>
+<text x="272" y="32" style="dominant-baseline:central;">G</text>
+<text x="272" y="53" style="dominant-baseline:central;">6</text>
+<text x="304" y="32" style="dominant-baseline:central;">Q</text>
+<text x="304" y="53" style="dominant-baseline:central;">7</text>
+<text x="336" y="32" style="dominant-baseline:central;">Y</text>
+<text x="336" y="53" style="dominant-baseline:central;">8</text>
+<text x="368" y="32" style="dominant-baseline:central;">G</text>
+<text x="368" y="53" style="dominant-baseline:central;">9</text>
+<text x="400" y="32" style="dominant-baseline:central;">E</text>
+<text x="400" y="53" style="dominant-baseline:central;">10</text>
+<text x="432" y="32" style="dominant-baseline:central;">V</text>
+<text x="432" y="53" style="dominant-baseline:central;">11</text>
+<text x="464" y="32" style="dominant-baseline:central;">Y</text>
+<text x="464" y="53" style="dominant-baseline:central;">12</text>
+<text x="496" y="32" style="dominant-baseline:central;">E</text>
+<text x="496" y="53" style="dominant-baseline:central;">13</text>
+<text x="528" y="32" style="dominant-baseline:central;">V</text>
+<text x="528" y="53" style="dominant-baseline:central;">14</text>
+<text x="560" y="32" style="dominant-baseline:central;">A</text>
+<text x="560" y="53" style="dominant-baseline:central;">15</text>
+<text x="592" y="32" style="dominant-baseline:central;">V</text>
+<text x="592" y="53" style="dominant-baseline:central;">16</text>
+<text x="624" y="32" style="dominant-baseline:central;">K</text>
+<text x="624" y="53" style="dominant-baseline:central;">17</text>
+<text x="656" y="32" style="dominant-baseline:central;">T</text>
+<text x="656" y="53" style="dominant-baseline:central;">18</text>
+<text x="688" y="32" style="dominant-baseline:central;">L</text>
+<text x="688" y="53" style="dominant-baseline:central;">19</text>
+<text x="720" y="32" style="dominant-baseline:central;">E</text>
+<text x="720" y="53" style="dominant-baseline:central;">20</text>
+<text x="752" y="32" style="dominant-baseline:central;">F</text>
+<text x="752" y="53" style="dominant-baseline:central;">21</text>
+<text x="784" y="32" style="dominant-baseline:central;">L</text>
+<text x="784" y="53" style="dominant-baseline:central;">22</text>
+<text x="816" y="32" style="dominant-baseline:central;">K</text>
+<text x="816" y="53" style="dominant-baseline:central;">23</text>
+<text x="848" y="32" style="dominant-baseline:central;">E</text>
+<text x="848" y="53" style="dominant-baseline:central;">24</text>
+<text x="880" y="32" style="dominant-baseline:central;">A</text>
+<text x="880" y="53" style="dominant-baseline:central;">25</text>
+<text x="912" y="32" style="dominant-baseline:central;">A</text>
+<text x="912" y="53" style="dominant-baseline:central;">26</text>
+<text x="944" y="32" style="dominant-baseline:central;">V</text>
+<text x="944" y="53" style="dominant-baseline:central;">27</text>
+<text x="976" y="32" style="dominant-baseline:central;">M</text>
+<text x="976" y="53" style="dominant-baseline:central;">28</text>
+<text x="1008" y="32" style="dominant-baseline:central;">K</text>
+<text x="1008" y="53" style="dominant-baseline:central;">29</text>
+<text x="1040" y="32" style="dominant-baseline:central;">E</text>
+<text x="1040" y="53" style="dominant-baseline:central;">30</text>
+<text x="1072" y="32" style="dominant-baseline:central;">I</text>
+<text x="1072" y="53" style="dominant-baseline:central;">31</text>
+<text x="1104" y="32" style="dominant-baseline:central;">K</text>
+<text x="1104" y="53" style="dominant-baseline:central;">32</text>
+<text x="1136" y="32" style="dominant-baseline:central;">P</text>
+<text x="1136" y="53" style="dominant-baseline:central;">33</text>
+<text x="1168" y="32" style="dominant-baseline:central;">N</text>
+<text x="1168" y="53" style="dominant-baseline:central;">34</text>
+<text x="1200" y="32" style="dominant-baseline:central;">L</text>
+<text x="1200" y="53" style="dominant-baseline:central;">35</text>
+<text x="1232" y="32" style="dominant-baseline:central;">V</text>
+<text x="1232" y="53" style="dominant-baseline:central;">36</text>
+<text x="1264" y="32" style="dominant-baseline:central;">Q</text>
+<text x="1264" y="53" style="dominant-baseline:central;">37</text>
+<text x="1296" y="32" style="dominant-baseline:central;">L</text>
+<text x="1296" y="53" style="dominant-baseline:central;">38</text>
+<text x="1328" y="32" style="dominant-baseline:central;">L</text>
+<text x="1328" y="53" style="dominant-baseline:central;">39</text>
+<text x="1360" y="32" style="dominant-baseline:central;">G</text>
+<text x="1360" y="53" style="dominant-baseline:central;">40</text>
+<text x="1392" y="32" style="dominant-baseline:central;">V</text>
+<text x="1392" y="53" style="dominant-baseline:central;">41</text>
+<text x="1424" y="32" style="dominant-baseline:central;">Y</text>
+<text x="1424" y="53" style="dominant-baseline:central;">42</text>
+<text x="1456" y="32" style="dominant-baseline:central;">I</text>
+<text x="1456" y="53" style="dominant-baseline:central;">43</text>
+<text x="1488" y="32" style="dominant-baseline:central;">I</text>
+<text x="1488" y="53" style="dominant-baseline:central;">44</text>
+<text x="1520" y="32" style="dominant-baseline:central;">T</text>
+<text x="1520" y="53" style="dominant-baseline:central;">45</text>
+<text x="1552" y="32" style="dominant-baseline:central;">E</text>
+<text x="1552" y="53" style="dominant-baseline:central;">46</text>
+<text x="1584" y="32" style="dominant-baseline:central;">F</text>
+<text x="1584" y="53" style="dominant-baseline:central;">47</text>
+<text x="1616" y="32" style="dominant-baseline:central;">M</text>
+<text x="1616" y="53" style="dominant-baseline:central;">48</text>
+<text x="1648" y="32" style="dominant-baseline:central;">T</text>
+<text x="1648" y="53" style="dominant-baseline:central;">49</text>
+<text x="1680" y="32" style="dominant-baseline:central;">Y</text>
+<text x="1680" y="53" style="dominant-baseline:central;">50</text>
+<text x="1712" y="32" style="dominant-baseline:central;">G</text>
+<text x="1712" y="53" style="dominant-baseline:central;">51</text>
+<text x="1744" y="32" style="dominant-baseline:central;">N</text>
+<text x="1744" y="53" style="dominant-baseline:central;">52</text>
+<text x="1776" y="32" style="dominant-baseline:central;">L</text>
+<text x="1776" y="53" style="dominant-baseline:central;">53</text>
+<text x="1808" y="32" style="dominant-baseline:central;">L</text>
+<text x="1808" y="53" style="dominant-baseline:central;">54</text>
+<text x="1840" y="32" style="dominant-baseline:central;">D</text>
+<text x="1840" y="53" style="dominant-baseline:central;">55</text>
+<text x="1872" y="32" style="dominant-baseline:central;">Y</text>
+<text x="1872" y="53" style="dominant-baseline:central;">56</text>
+<text x="1904" y="32" style="dominant-baseline:central;">L</text>
+<text x="1904" y="53" style="dominant-baseline:central;">57</text>
+<text x="1936" y="32" style="dominant-baseline:central;">R</text>
+<text x="1936" y="53" style="dominant-baseline:central;">58</text>
+<text x="1968" y="32" style="dominant-baseline:central;">E</text>
+<text x="1968" y="53" style="dominant-baseline:central;">59</text>
+<text x="2000" y="32" style="dominant-baseline:central;">Y</text>
+<text x="2000" y="53" style="dominant-baseline:central;">60</text>
+<text x="2032" y="32" style="dominant-baseline:central;">L</text>
+<text x="2032" y="53" style="dominant-baseline:central;">61</text>
+<text x="2064" y="32" style="dominant-baseline:central;">E</text>
+<text x="2064" y="53" style="dominant-baseline:central;">62</text>
+<text x="2096" y="32" style="dominant-baseline:central;">K</text>
+<text x="2096" y="53" style="dominant-baseline:central;">63</text>
+<text x="2128" y="32" style="dominant-baseline:central;">K</text>
+<text x="2128" y="53" style="dominant-baseline:central;">64</text>
+<text x="2160" y="32" style="dominant-baseline:central;">N</text>
+<text x="2160" y="53" style="dominant-baseline:central;">65</text>
+<text x="2192" y="32" style="dominant-baseline:central;">F</text>
+<text x="2192" y="53" style="dominant-baseline:central;">66</text>
+<text x="2224" y="32" style="dominant-baseline:central;">I</text>
+<text x="2224" y="53" style="dominant-baseline:central;">67</text>
+<text x="2256" y="32" style="dominant-baseline:central;">H</text>
+<text x="2256" y="53" style="dominant-baseline:central;">68</text>
+<text x="2288" y="32" style="dominant-baseline:central;">R</text>
+<text x="2288" y="53" style="dominant-baseline:central;">69</text>
+<text x="2320" y="32" style="dominant-baseline:central;">D</text>
+<text x="2320" y="53" style="dominant-baseline:central;">70</text>
+<text x="2352" y="32" style="dominant-baseline:central;">L</text>
+<text x="2352" y="53" style="dominant-baseline:central;">71</text>
+<text x="2384" y="32" style="dominant-baseline:central;">A</text>
+<text x="2384" y="53" style="dominant-baseline:central;">72</text>
+<text x="2416" y="32" style="dominant-baseline:central;">A</text>
+<text x="2416" y="53" style="dominant-baseline:central;">73</text>
+<text x="2448" y="32" style="dominant-baseline:central;">R</text>
+<text x="2448" y="53" style="dominant-baseline:central;">74</text>
+<text x="2480" y="32" style="dominant-baseline:central;">N</text>
+<text x="2480" y="53" style="dominant-baseline:central;">75</text>
+<text x="2512" y="32" style="dominant-baseline:central;">C</text>
+<text x="2512" y="53" style="dominant-baseline:central;">76</text>
+<text x="2544" y="32" style="dominant-baseline:central;">L</text>
+<text x="2544" y="53" style="dominant-baseline:central;">77</text>
+<text x="2576" y="32" style="dominant-baseline:central;">V</text>
+<text x="2576" y="53" style="dominant-baseline:central;">78</text>
+<text x="2608" y="32" style="dominant-baseline:central;">V</text>
+<text x="2608" y="53" style="dominant-baseline:central;">79</text>
+<text x="2640" y="32" style="dominant-baseline:central;">A</text>
+<text x="2640" y="53" style="dominant-baseline:central;">80</text>
+<text x="2672" y="32" style="dominant-baseline:central;">D</text>
+<text x="2672" y="53" style="dominant-baseline:central;">81</text>
+<text x="2704" y="32" style="dominant-baseline:central;">F</text>
+<text x="2704" y="53" style="dominant-baseline:central;">82</text>
+<text x="2736" y="32" style="dominant-baseline:central;">G</text>
+<text x="2736" y="53" style="dominant-baseline:central;">83</text>
+<text x="2768" y="32" style="dominant-baseline:central;">L</text>
+<text x="2768" y="53" style="dominant-baseline:central;">84</text>
+<text x="2800" y="32" style="dominant-baseline:central;">S</text>
+<text x="2800" y="53" style="dominant-baseline:central;">85</text>
+</g>
+</g>
+<g class="stre">
+<g class="ligand_labels" style="fill:#000000;" cursor="default">
+<text x="48" y="80" style="dominant-baseline:central;font-weight:bold;" class="ligcl sT l0"><title>all</title>all</text>
+<text x="48" y="400" style="dominant-baseline:central;" class="ligcl sT l1" textLength="96"><title>ABL1_3cs9_altA_chainA:nil; ABL1_3cs9_altA_chainB:nil; ABL1_3cs9_altA_chainC:nil; ABL1_3cs9_altA_chainD:nil; ABL1_3cs9_altB_chainA:nil; ABL1_3cs9_altB_chainB:nil; ABL1_3cs9_altB_chainC:nil; ABL1_3cs9_altB_chainD:nil; ABL1_5mo4_altA_chainA:nil; ABL1_5mo4_altB_chainA:nil</title>ABL1_3cs9_al...</text>
+<text x="48" y="240" style="dominant-baseline:central;" class="ligcl sT l8" textLength="96"><title>ABL1_2hiw_chainA:q7m; ABL1_2hiw_chainB:q7m</title>ABL1_2hiw_ch...</text>
+<text x="48" y="304" style="dominant-baseline:central;" class="ligcl sT l6" textLength="96"><title>ABL1_2hz0_altA_chainA:gin; ABL1_2hz0_altA_chainB:gin; ABL1_2hz0_altB_chainA:gin; ABL1_2hz0_altB_chainB:gin</title>ABL1_2hz0_al...</text>
+<text x="48" y="464" style="dominant-baseline:central;" class="ligcl sT l13" textLength="96"><title>ABL1_3qri_altA_chainB:q91</title>ABL1_3qri_al...</text>
+<text x="48" y="432" style="dominant-baseline:central;" class="ligcl sT l14" textLength="96"><title>ABL1_3qri_altA_chainA:q91</title>ABL1_3qri_al...</text>
+<text x="48" y="272" style="dominant-baseline:central;" class="ligcl sT l3" textLength="96"><title>ABL1_2hyy_chainA:sti; ABL1_2hyy_chainB:sti; ABL1_2hyy_chainC:sti; ABL1_2hyy_chainD:sti; ABL1_3pyy_altA_chainA:sti; ABL1_3pyy_altA_chainB:sti; ABL1_3pyy_altB_chainA:sti; ABL1_3pyy_altB_chainB:sti</title>ABL1_2hyy_ch...</text>
+<text x="48" y="144" style="dominant-baseline:central;" class="ligcl sT l9" textLength="96"><title>ABL1_2e2b_chainA:q40; ABL1_2e2b_chainB:q40</title>ABL1_2e2b_ch...</text>
+<text x="48" y="528" style="dominant-baseline:central;" class="ligcl sT l11" textLength="96"><title>ABL1_5hu9_altA_chainA:q66; ABL1_5hu9_altB_chainA:q66</title>ABL1_5hu9_al...</text>
+<text x="48" y="112" style="dominant-baseline:central;" class="ligcl sT l2" textLength="96"><title>ABL1_1opl_chainA:p16; ABL1_1opl_chainB:p16; ABL1_2fo0_chainA:p16; ABL1_2g2h_chainA:p16; ABL1_2g2h_chainB:p16; ABL1_2hzi_altA_chainA:jin; ABL1_2hzi_altA_chainB:jin; ABL1_2hzi_altB_chainA:jin; ABL1_2hzi_altB_chainB:jin</title>ABL1_1opl_ch...</text>
+<text x="48" y="208" style="dominant-baseline:central;" class="ligcl sT l4" textLength="96"><title>ABL1_2gqg_altA_chainA:q1n; ABL1_2gqg_altA_chainB:q1n; ABL1_2gqg_altB_chainA:q1n; ABL1_2gqg_altB_chainB:q1n; ABL1_4xey_chainA:q1n; ABL1_4xey_chainB:q1n</title>ABL1_2gqg_al...</text>
+<text x="48" y="496" style="dominant-baseline:central;" class="ligcl sT l10" textLength="96"><title>ABL1_4yc8_chainA:*; ABL1_4yc8_chainB:q4b</title>ABL1_4yc8_ch...</text>
+<text x="48" y="560" style="dominant-baseline:central;" class="ligcl sT l5" textLength="96"><title>ABL1_6bl8_altA_chainA:pvb; ABL1_6bl8_altA_chainB:pvb; ABL1_6bl8_altB_chainA:pvb; ABL1_6bl8_altB_chainB:pvb</title>ABL1_6bl8_al...</text>
+<text x="48" y="176" style="dominant-baseline:central;" class="ligcl sT l7" textLength="96"><title>ABL1_2f4j_chainA:vx6; ABL1_4zog_chainA:vx6; ABL1_4zog_chainB:vx6</title>ABL1_2f4j_ch...</text>
+<text x="48" y="368" style="dominant-baseline:central;" class="ligcl sT l12" textLength="96"><title>ABL1_2v7a_chainA:q62; ABL1_2v7a_chainB:q62</title>ABL1_2v7a_ch...</text>
+<text x="48" y="336" style="dominant-baseline:central;" class="ligcl sT l15" textLength="96"><title>ABL1_2hz4_chainB:q4s</title>ABL1_2hz4_ch...</text>
+</g>
+<g class="fpcl_borders" style="stroke:#cccccc;stroke-width:1">
+<line x1="0" y1="95" x2="1248" y2="95"/>
+</g>
+<g class="stre_T">
+<circle cx="176" cy="80" r="7.51963" style="fill:#abd5ab;" class="spot l0 r3 tT s1_3"><title>A1-3 [all] 1.3</title></circle>
+<circle cx="336" cy="80" r="4.082535" style="fill:#e6f3e6;" class="spot l0 r8 tT s0_3"><title>A1-8 [all] 0.3</title></circle>
+<circle cx="432" cy="80" r="5.842152" style="fill:#cce6cc;" class="spot l0 r11 tT s0_7"><title>A1-11 [all] 0.7</title></circle>
+<circle cx="560" cy="80" r="9.811371" style="fill:#6fb76f;" class="spot l0 r15 tT s2_2"><title>A1-15 [all] 2.2</title></circle>
+<circle cx="592" cy="80" r="4.02094" style="fill:#e7f3e7;" class="spot l0 r16 tT s0_3"><title>A1-16 [all] 0.3</title></circle>
+<circle cx="624" cy="80" r="7.787678" style="fill:#a4d2a4;" class="spot l0 r17 tT s1_4"><title>A1-17 [all] 1.4</title></circle>
+<circle cx="848" cy="80" r="6.526418" style="fill:#bfdfbf;" class="spot l0 r24 tT s0_9"><title>A1-24 [all] 0.9</title></circle>
+<circle cx="944" cy="80" r="3.583445" style="fill:#ecf5ec;" class="spot l0 r27 tT s0_3"><title>A1-27 [all] 0.3</title></circle>
+<circle cx="976" cy="80" r="7.08256" style="fill:#b4dab4;" class="spot l0 r28 tT s1_1"><title>A1-28 [all] 1.1</title></circle>
+<circle cx="1072" cy="80" r="3.935609" style="fill:#e8f3e8;" class="spot l0 r31 tT s0_3"><title>A1-31 [all] 0.3</title></circle>
+<circle cx="1200" cy="80" r="4.752013" style="fill:#ddeedd;" class="spot l0 r35 tT s0_5"><title>A1-35 [all] 0.5</title></circle>
+<circle cx="1232" cy="80" r="6.932813" style="fill:#b7dbb7;" class="spot l0 r36 tT s1_1"><title>A1-36 [all] 1.1</title></circle>
+<circle cx="1456" cy="80" r="6.4975" style="fill:#c0e0c0;" class="spot l0 r43 tT s0_9"><title>A1-43 [all] 0.9</title></circle>
+<circle cx="1520" cy="80" r="9.762414" style="fill:#71b871;" class="spot l0 r45 tT s2_2"><title>A1-45 [all] 2.2</title></circle>
+<circle cx="1552" cy="80" r="6.939272" style="fill:#b7dbb7;" class="spot l0 r46 tT s1_1"><title>A1-46 [all] 1.1</title></circle>
+<circle cx="1584" cy="80" r="11.798888" style="fill:#2f972f;" class="spot l0 r47 tT s3_2"><title>A1-47 [all] 3.2</title></circle>
+<circle cx="1616" cy="80" r="13.036574" style="fill:#018101;" class="spot l0 r48 tT s3_9"><title>A1-48 [all] 3.9</title></circle>
+<circle cx="1648" cy="80" r="5.646262" style="fill:#cfe7cf;" class="spot l0 r49 tT s0_7"><title>A1-49 [all] 0.7</title></circle>
+<circle cx="1680" cy="80" r="4.208066" style="fill:#e5f2e5;" class="spot l0 r50 tT s0_4"><title>A1-50 [all] 0.4</title></circle>
+<circle cx="1712" cy="80" r="8.364332" style="fill:#96cb96;" class="spot l0 r51 tT s1_6"><title>A1-51 [all] 1.6</title></circle>
+<circle cx="1744" cy="80" r="3.291226" style="fill:#eff7ef;" class="spot l0 r52 tT s0_2"><title>A1-52 [all] 0.2</title></circle>
+<circle cx="2032" cy="80" r="2.739225" style="fill:#f4f9f4;" class="spot l0 r61 tT s0_1"><title>A1-61 [all] 0.1</title></circle>
+<circle cx="2192" cy="80" r="2.155508" style="fill:#f8fcf8;" class="spot l0 r66 tT s0_1"><title>A1-66 [all] 0.1</title></circle>
+<circle cx="2224" cy="80" r="3.83968" style="fill:#e9f4e9;" class="spot l0 r67 tT s0_3"><title>A1-67 [all] 0.3</title></circle>
+<circle cx="2256" cy="80" r="7.148525" style="fill:#b3d9b3;" class="spot l0 r68 tT s1_1"><title>A1-68 [all] 1.1</title></circle>
+<circle cx="2448" cy="80" r="3.820104" style="fill:#e9f4e9;" class="spot l0 r74 tT s0_3"><title>A1-74 [all] 0.3</title></circle>
+<circle cx="2544" cy="80" r="9.713808" style="fill:#72b972;" class="spot l0 r77 tT s2_2"><title>A1-77 [all] 2.2</title></circle>
+<circle cx="2608" cy="80" r="6.014798" style="fill:#c9e4c9;" class="spot l0 r79 tT s0_8"><title>A1-79 [all] 0.8</title></circle>
+<circle cx="2640" cy="80" r="9.446793" style="fill:#7abd7a;" class="spot l0 r80 tT s2_0"><title>A1-80 [all] 2.0</title></circle>
+<circle cx="2672" cy="80" r="8.541572" style="fill:#92c992;" class="spot l0 r81 tT s1_7"><title>A1-81 [all] 1.7</title></circle>
+<circle cx="2704" cy="80" r="5.922119" style="fill:#cbe5cb;" class="spot l0 r82 tT s0_8"><title>A1-82 [all] 0.8</title></circle>
+<circle cx="176" cy="400" r="6.507471" style="fill:#c0dfc0;" class="spot l1 r3 tT s0_9"><title>A1-3 [ABL1_3cs9_al...] 0.9</title></circle>
+<circle cx="336" cy="400" r="6.640762" style="fill:#bddebd;" class="spot l1 r8 tT s1_0"><title>A1-8 [ABL1_3cs9_al...] 1.0</title></circle>
+<circle cx="432" cy="400" r="6.70866" style="fill:#bcdebc;" class="spot l1 r11 tT s1_0"><title>A1-11 [ABL1_3cs9_al...] 1.0</title></circle>
+<circle cx="560" cy="400" r="10.558793" style="fill:#58ac58;" class="spot l1 r15 tT s2_6"><title>A1-15 [ABL1_3cs9_al...] 2.6</title></circle>
+<circle cx="592" cy="400" r="5.599179" style="fill:#d0e8d0;" class="spot l1 r16 tT s0_7"><title>A1-16 [ABL1_3cs9_al...] 0.7</title></circle>
+<circle cx="624" cy="400" r="7.872152" style="fill:#a2d1a2;" class="spot l1 r17 tT s1_4"><title>A1-17 [ABL1_3cs9_al...] 1.4</title></circle>
+<circle cx="848" cy="400" r="9.807483" style="fill:#6fb76f;" class="spot l1 r24 tT s2_2"><title>A1-24 [ABL1_3cs9_al...] 2.2</title></circle>
+<circle cx="944" cy="400" r="7.553742" style="fill:#aad5aa;" class="spot l1 r27 tT s1_3"><title>A1-27 [ABL1_3cs9_al...] 1.3</title></circle>
+<circle cx="976" cy="400" r="8.847573" style="fill:#8ac58a;" class="spot l1 r28 tT s1_8"><title>A1-28 [ABL1_3cs9_al...] 1.8</title></circle>
+<circle cx="1072" cy="400" r="6.260496" style="fill:#c4e2c4;" class="spot l1 r31 tT s0_9"><title>A1-31 [ABL1_3cs9_al...] 0.9</title></circle>
+<circle cx="1200" cy="400" r="7.409195" style="fill:#add6ad;" class="spot l1 r35 tT s1_2"><title>A1-35 [ABL1_3cs9_al...] 1.2</title></circle>
+<circle cx="1232" cy="400" r="8.020387" style="fill:#9fcf9f;" class="spot l1 r36 tT s1_5"><title>A1-36 [ABL1_3cs9_al...] 1.5</title></circle>
+<circle cx="1456" cy="400" r="7.203661" style="fill:#b1d8b1;" class="spot l1 r43 tT s1_2"><title>A1-43 [ABL1_3cs9_al...] 1.2</title></circle>
+<circle cx="1520" cy="400" r="11.368508" style="fill:#3e9f3e;" class="spot l1 r45 tT s3_0"><title>A1-45 [ABL1_3cs9_al...] 3.0</title></circle>
+<circle cx="1552" cy="400" r="3.320303" style="fill:#eff7ef;" class="spot l1 r46 tT s0_2"><title>A1-46 [ABL1_3cs9_al...] 0.2</title></circle>
+<circle cx="1584" cy="400" r="12.212337" style="fill:#209020;" class="spot l1 r47 tT s3_4"><title>A1-47 [ABL1_3cs9_al...] 3.4</title></circle>
+<circle cx="1616" cy="400" r="11.935758" style="fill:#2a952a;" class="spot l1 r48 tT s3_3"><title>A1-48 [ABL1_3cs9_al...] 3.3</title></circle>
+<circle cx="1712" cy="400" r="6.679073" style="fill:#bcdebc;" class="spot l1 r51 tT s1_0"><title>A1-51 [ABL1_3cs9_al...] 1.0</title></circle>
+<circle cx="2032" cy="400" r="4.346257" style="fill:#e3f1e3;" class="spot l1 r61 tT s0_4"><title>A1-61 [ABL1_3cs9_al...] 0.4</title></circle>
+<circle cx="2192" cy="400" r="5.93523" style="fill:#cae5ca;" class="spot l1 r66 tT s0_8"><title>A1-66 [ABL1_3cs9_al...] 0.8</title></circle>
+<circle cx="2256" cy="400" r="7.885383" style="fill:#a2d1a2;" class="spot l1 r68 tT s1_4"><title>A1-68 [ABL1_3cs9_al...] 1.4</title></circle>
+<circle cx="2544" cy="400" r="8.708792" style="fill:#8ec78e;" class="spot l1 r77 tT s1_7"><title>A1-77 [ABL1_3cs9_al...] 1.7</title></circle>
+<circle cx="2608" cy="400" r="9.058596" style="fill:#84c284;" class="spot l1 r79 tT s1_9"><title>A1-79 [ABL1_3cs9_al...] 1.9</title></circle>
+<circle cx="2640" cy="400" r="12.24716" style="fill:#1f8f1f;" class="spot l1 r80 tT s3_5"><title>A1-80 [ABL1_3cs9_al...] 3.5</title></circle>
+<circle cx="2672" cy="400" r="10.870953" style="fill:#4ea74e;" class="spot l1 r81 tT s2_7"><title>A1-81 [ABL1_3cs9_al...] 2.7</title></circle>
+<circle cx="2704" cy="400" r="6.828188" style="fill:#b9dcb9;" class="spot l1 r82 tT s1_0"><title>A1-82 [ABL1_3cs9_al...] 1.0</title></circle>
+<circle cx="176" cy="240" r="6.833202" style="fill:#b9dcb9;" class="spot l8 r3 tT s1_0"><title>A1-3 [ABL1_2hiw_ch...] 1.0</title></circle>
+<circle cx="336" cy="240" r="5.987615" style="fill:#c9e4c9;" class="spot l8 r8 tT s0_8"><title>A1-8 [ABL1_2hiw_ch...] 0.8</title></circle>
+<circle cx="432" cy="240" r="7.36955" style="fill:#aed7ae;" class="spot l8 r11 tT s1_2"><title>A1-11 [ABL1_2hiw_ch...] 1.2</title></circle>
+<circle cx="560" cy="240" r="11.108285" style="fill:#47a347;" class="spot l8 r15 tT s2_8"><title>A1-15 [ABL1_2hiw_ch...] 2.8</title></circle>
+<circle cx="592" cy="240" r="5.653033" style="fill:#cfe7cf;" class="spot l8 r16 tT s0_7"><title>A1-16 [ABL1_2hiw_ch...] 0.7</title></circle>
+<circle cx="624" cy="240" r="8.229081" style="fill:#9acd9a;" class="spot l8 r17 tT s1_5"><title>A1-17 [ABL1_2hiw_ch...] 1.5</title></circle>
+<circle cx="848" cy="240" r="6.391388" style="fill:#c2e1c2;" class="spot l8 r24 tT s0_9"><title>A1-24 [ABL1_2hiw_ch...] 0.9</title></circle>
+<circle cx="944" cy="240" r="3.863608" style="fill:#e9f4e9;" class="spot l8 r27 tT s0_3"><title>A1-27 [ABL1_2hiw_ch...] 0.3</title></circle>
+<circle cx="976" cy="240" r="8.613791" style="fill:#90c890;" class="spot l8 r28 tT s1_7"><title>A1-28 [ABL1_2hiw_ch...] 1.7</title></circle>
+<circle cx="1072" cy="240" r="6.835406" style="fill:#b9dcb9;" class="spot l8 r31 tT s1_0"><title>A1-31 [ABL1_2hiw_ch...] 1.0</title></circle>
+<circle cx="1200" cy="240" r="6.959179" style="fill:#b7dbb7;" class="spot l8 r35 tT s1_1"><title>A1-35 [ABL1_2hiw_ch...] 1.1</title></circle>
+<circle cx="1232" cy="240" r="8.203044" style="fill:#9acd9a;" class="spot l8 r36 tT s1_5"><title>A1-36 [ABL1_2hiw_ch...] 1.5</title></circle>
+<circle cx="1456" cy="240" r="8.416361" style="fill:#95ca95;" class="spot l8 r43 tT s1_6"><title>A1-43 [ABL1_2hiw_ch...] 1.6</title></circle>
+<circle cx="1520" cy="240" r="9.800609" style="fill:#6fb86f;" class="spot l8 r45 tT s2_2"><title>A1-45 [ABL1_2hiw_ch...] 2.2</title></circle>
+<circle cx="1552" cy="240" r="7.86374" style="fill:#a3d1a3;" class="spot l8 r46 tT s1_4"><title>A1-46 [ABL1_2hiw_ch...] 1.4</title></circle>
+<circle cx="1584" cy="240" r="9.87072" style="fill:#6db66d;" class="spot l8 r47 tT s2_2"><title>A1-47 [ABL1_2hiw_ch...] 2.2</title></circle>
+<circle cx="1616" cy="240" r="12.775772" style="fill:#0b860b;" class="spot l8 r48 tT s3_8"><title>A1-48 [ABL1_2hiw_ch...] 3.8</title></circle>
+<circle cx="1712" cy="240" r="6.36575" style="fill:#c2e1c2;" class="spot l8 r51 tT s0_9"><title>A1-51 [ABL1_2hiw_ch...] 0.9</title></circle>
+<circle cx="2032" cy="240" r="4.07202" style="fill:#e6f3e6;" class="spot l8 r61 tT s0_3"><title>A1-61 [ABL1_2hiw_ch...] 0.3</title></circle>
+<circle cx="2256" cy="240" r="8.218575" style="fill:#9acd9a;" class="spot l8 r68 tT s1_5"><title>A1-68 [ABL1_2hiw_ch...] 1.5</title></circle>
+<circle cx="2544" cy="240" r="10.484718" style="fill:#5bad5b;" class="spot l8 r77 tT s2_5"><title>A1-77 [ABL1_2hiw_ch...] 2.5</title></circle>
+<circle cx="2608" cy="240" r="8.463393" style="fill:#94ca94;" class="spot l8 r79 tT s1_6"><title>A1-79 [ABL1_2hiw_ch...] 1.6</title></circle>
+<circle cx="2640" cy="240" r="12.692392" style="fill:#0e870e;" class="spot l8 r80 tT s3_7"><title>A1-80 [ABL1_2hiw_ch...] 3.7</title></circle>
+<circle cx="2672" cy="240" r="10.748544" style="fill:#52a952;" class="spot l8 r81 tT s2_7"><title>A1-81 [ABL1_2hiw_ch...] 2.7</title></circle>
+<circle cx="2704" cy="240" r="7.504822" style="fill:#abd5ab;" class="spot l8 r82 tT s1_3"><title>A1-82 [ABL1_2hiw_ch...] 1.3</title></circle>
+<circle cx="176" cy="304" r="5.258791" style="fill:#d6ead6;" class="spot l6 r3 tT s0_6"><title>A1-3 [ABL1_2hz0_al...] 0.6</title></circle>
+<circle cx="432" cy="304" r="5.754135" style="fill:#cee6ce;" class="spot l6 r11 tT s0_7"><title>A1-11 [ABL1_2hz0_al...] 0.7</title></circle>
+<circle cx="560" cy="304" r="10.495796" style="fill:#5aad5a;" class="spot l6 r15 tT s2_5"><title>A1-15 [ABL1_2hz0_al...] 2.5</title></circle>
+<circle cx="592" cy="304" r="4.323497" style="fill:#e3f1e3;" class="spot l6 r16 tT s0_4"><title>A1-16 [ABL1_2hz0_al...] 0.4</title></circle>
+<circle cx="624" cy="304" r="9.929" style="fill:#6cb66c;" class="spot l6 r17 tT s2_3"><title>A1-17 [ABL1_2hz0_al...] 2.3</title></circle>
+<circle cx="848" cy="304" r="8.027646" style="fill:#9fcf9f;" class="spot l6 r24 tT s1_5"><title>A1-24 [ABL1_2hz0_al...] 1.5</title></circle>
+<circle cx="944" cy="304" r="4.779899" style="fill:#ddeedd;" class="spot l6 r27 tT s0_5"><title>A1-27 [ABL1_2hz0_al...] 0.5</title></circle>
+<circle cx="976" cy="304" r="8.525865" style="fill:#92c992;" class="spot l6 r28 tT s1_7"><title>A1-28 [ABL1_2hz0_al...] 1.7</title></circle>
+<circle cx="1072" cy="304" r="5.759261" style="fill:#cde6cd;" class="spot l6 r31 tT s0_7"><title>A1-31 [ABL1_2hz0_al...] 0.7</title></circle>
+<circle cx="1200" cy="304" r="8.828096" style="fill:#8bc58b;" class="spot l6 r35 tT s1_8"><title>A1-35 [ABL1_2hz0_al...] 1.8</title></circle>
+<circle cx="1232" cy="304" r="9.408542" style="fill:#7bbd7b;" class="spot l6 r36 tT s2_0"><title>A1-36 [ABL1_2hz0_al...] 2.0</title></circle>
+<circle cx="1456" cy="304" r="8.91488" style="fill:#88c488;" class="spot l6 r43 tT s1_8"><title>A1-43 [ABL1_2hz0_al...] 1.8</title></circle>
+<circle cx="1520" cy="304" r="10.665213" style="fill:#55aa55;" class="spot l6 r45 tT s2_6"><title>A1-45 [ABL1_2hz0_al...] 2.6</title></circle>
+<circle cx="1552" cy="304" r="8.248882" style="fill:#99cc99;" class="spot l6 r46 tT s1_5"><title>A1-46 [ABL1_2hz0_al...] 1.5</title></circle>
+<circle cx="1584" cy="304" r="11.433745" style="fill:#3c9e3c;" class="spot l6 r47 tT s3_0"><title>A1-47 [ABL1_2hz0_al...] 3.0</title></circle>
+<circle cx="1616" cy="304" r="10.489728" style="fill:#5bad5b;" class="spot l6 r48 tT s2_5"><title>A1-48 [ABL1_2hz0_al...] 2.5</title></circle>
+<circle cx="2032" cy="304" r="5.839409" style="fill:#cce6cc;" class="spot l6 r61 tT s0_7"><title>A1-61 [ABL1_2hz0_al...] 0.7</title></circle>
+<circle cx="2192" cy="304" r="5.231067" style="fill:#d6ebd6;" class="spot l6 r66 tT s0_6"><title>A1-66 [ABL1_2hz0_al...] 0.6</title></circle>
+<circle cx="2224" cy="304" r="5.180103" style="fill:#d7ebd7;" class="spot l6 r67 tT s0_6"><title>A1-67 [ABL1_2hz0_al...] 0.6</title></circle>
+<circle cx="2256" cy="304" r="9.386187" style="fill:#7bbd7b;" class="spot l6 r68 tT s2_0"><title>A1-68 [ABL1_2hz0_al...] 2.0</title></circle>
+<circle cx="2544" cy="304" r="9.898665" style="fill:#6db66d;" class="spot l6 r77 tT s2_2"><title>A1-77 [ABL1_2hz0_al...] 2.2</title></circle>
+<circle cx="2608" cy="304" r="10.698414" style="fill:#54aa54;" class="spot l6 r79 tT s2_6"><title>A1-79 [ABL1_2hz0_al...] 2.6</title></circle>
+<circle cx="2640" cy="304" r="12.781267" style="fill:#0b850b;" class="spot l6 r80 tT s3_8"><title>A1-80 [ABL1_2hz0_al...] 3.8</title></circle>
+<circle cx="2672" cy="304" r="10.332133" style="fill:#5fb05f;" class="spot l6 r81 tT s2_5"><title>A1-81 [ABL1_2hz0_al...] 2.5</title></circle>
+<circle cx="2704" cy="304" r="6.760078" style="fill:#bbddbb;" class="spot l6 r82 tT s1_0"><title>A1-82 [ABL1_2hz0_al...] 1.0</title></circle>
+<circle cx="176" cy="464" r="7.269278" style="fill:#b0d8b0;" class="spot l13 r3 tT s1_2"><title>A1-3 [ABL1_3qri_al...] 1.2</title></circle>
+<circle cx="432" cy="464" r="6.186499" style="fill:#c6e3c6;" class="spot l13 r11 tT s0_8"><title>A1-11 [ABL1_3qri_al...] 0.8</title></circle>
+<circle cx="560" cy="464" r="8.893594" style="fill:#89c489;" class="spot l13 r15 tT s1_8"><title>A1-15 [ABL1_3qri_al...] 1.8</title></circle>
+<circle cx="624" cy="464" r="6.841075" style="fill:#b9dcb9;" class="spot l13 r17 tT s1_0"><title>A1-17 [ABL1_3qri_al...] 1.0</title></circle>
+<circle cx="720" cy="464" r="5.760512" style="fill:#cde6cd;" class="spot l13 r20 tT s0_7"><title>A1-20 [ABL1_3qri_al...] 0.7</title></circle>
+<circle cx="848" cy="464" r="10.020563" style="fill:#69b469;" class="spot l13 r24 tT s2_3"><title>A1-24 [ABL1_3qri_al...] 2.3</title></circle>
+<circle cx="944" cy="464" r="5.660781" style="fill:#cfe7cf;" class="spot l13 r27 tT s0_7"><title>A1-27 [ABL1_3qri_al...] 0.7</title></circle>
+<circle cx="976" cy="464" r="8.419051" style="fill:#95ca95;" class="spot l13 r28 tT s1_6"><title>A1-28 [ABL1_3qri_al...] 1.6</title></circle>
+<circle cx="1072" cy="464" r="5.130947" style="fill:#d8ebd8;" class="spot l13 r31 tT s0_6"><title>A1-31 [ABL1_3qri_al...] 0.6</title></circle>
+<circle cx="1200" cy="464" r="4.894879" style="fill:#dbeddb;" class="spot l13 r35 tT s0_5"><title>A1-35 [ABL1_3qri_al...] 0.5</title></circle>
+<circle cx="1232" cy="464" r="8.042088" style="fill:#9ecf9e;" class="spot l13 r36 tT s1_5"><title>A1-36 [ABL1_3qri_al...] 1.5</title></circle>
+<circle cx="1456" cy="464" r="4.327595" style="fill:#e3f1e3;" class="spot l13 r43 tT s0_4"><title>A1-43 [ABL1_3qri_al...] 0.4</title></circle>
+<circle cx="1520" cy="464" r="9.07491" style="fill:#84c284;" class="spot l13 r45 tT s1_9"><title>A1-45 [ABL1_3qri_al...] 1.9</title></circle>
+<circle cx="1552" cy="464" r="7.76586" style="fill:#a5d2a5;" class="spot l13 r46 tT s1_4"><title>A1-46 [ABL1_3qri_al...] 1.4</title></circle>
+<circle cx="1584" cy="464" r="10.556615" style="fill:#58ac58;" class="spot l13 r47 tT s2_6"><title>A1-47 [ABL1_3qri_al...] 2.6</title></circle>
+<circle cx="1616" cy="464" r="13.576641" style="fill:#008000;" class="spot l13 r48 tT s4_3"><title>A1-48 [ABL1_3qri_al...] 4.3</title></circle>
+<circle cx="1648" cy="464" r="5.772529" style="fill:#cde6cd;" class="spot l13 r49 tT s0_7"><title>A1-49 [ABL1_3qri_al...] 0.7</title></circle>
+<circle cx="1712" cy="464" r="7.675184" style="fill:#a7d3a7;" class="spot l13 r51 tT s1_3"><title>A1-51 [ABL1_3qri_al...] 1.3</title></circle>
+<circle cx="2032" cy="464" r="5.029151" style="fill:#d9ecd9;" class="spot l13 r61 tT s0_5"><title>A1-61 [ABL1_3qri_al...] 0.5</title></circle>
+<circle cx="2192" cy="464" r="4.433197" style="fill:#e2f0e2;" class="spot l13 r66 tT s0_4"><title>A1-66 [ABL1_3qri_al...] 0.4</title></circle>
+<circle cx="2256" cy="464" r="8.521955" style="fill:#92c992;" class="spot l13 r68 tT s1_7"><title>A1-68 [ABL1_3qri_al...] 1.7</title></circle>
+<circle cx="2544" cy="464" r="9.144963" style="fill:#82c182;" class="spot l13 r77 tT s1_9"><title>A1-77 [ABL1_3qri_al...] 1.9</title></circle>
+<circle cx="2608" cy="464" r="6.614493" style="fill:#bedebe;" class="spot l13 r79 tT s1_0"><title>A1-79 [ABL1_3qri_al...] 1.0</title></circle>
+<circle cx="2640" cy="464" r="11.661176" style="fill:#349a34;" class="spot l13 r80 tT s3_1"><title>A1-80 [ABL1_3qri_al...] 3.1</title></circle>
+<circle cx="2672" cy="464" r="10.419336" style="fill:#5dae5d;" class="spot l13 r81 tT s2_5"><title>A1-81 [ABL1_3qri_al...] 2.5</title></circle>
+<circle cx="2704" cy="464" r="7.268865" style="fill:#b0d8b0;" class="spot l13 r82 tT s1_2"><title>A1-82 [ABL1_3qri_al...] 1.2</title></circle>
+<circle cx="176" cy="432" r="7.299882" style="fill:#afd7af;" class="spot l14 r3 tT s1_2"><title>A1-3 [ABL1_3qri_al...] 1.2</title></circle>
+<circle cx="432" cy="432" r="6.345842" style="fill:#c3e1c3;" class="spot l14 r11 tT s0_9"><title>A1-11 [ABL1_3qri_al...] 0.9</title></circle>
+<circle cx="560" cy="432" r="8.997539" style="fill:#86c386;" class="spot l14 r15 tT s1_8"><title>A1-15 [ABL1_3qri_al...] 1.8</title></circle>
+<circle cx="624" cy="432" r="6.960937" style="fill:#b7dbb7;" class="spot l14 r17 tT s1_1"><title>A1-17 [ABL1_3qri_al...] 1.1</title></circle>
+<circle cx="720" cy="432" r="5.275058" style="fill:#d5ead5;" class="spot l14 r20 tT s0_6"><title>A1-20 [ABL1_3qri_al...] 0.6</title></circle>
+<circle cx="848" cy="432" r="9.974235" style="fill:#6ab56a;" class="spot l14 r24 tT s2_3"><title>A1-24 [ABL1_3qri_al...] 2.3</title></circle>
+<circle cx="944" cy="432" r="5.592114" style="fill:#d0e8d0;" class="spot l14 r27 tT s0_7"><title>A1-27 [ABL1_3qri_al...] 0.7</title></circle>
+<circle cx="976" cy="432" r="8.471864" style="fill:#94ca94;" class="spot l14 r28 tT s1_6"><title>A1-28 [ABL1_3qri_al...] 1.6</title></circle>
+<circle cx="1072" cy="432" r="4.432958" style="fill:#e2f0e2;" class="spot l14 r31 tT s0_4"><title>A1-31 [ABL1_3qri_al...] 0.4</title></circle>
+<circle cx="1200" cy="432" r="5.675181" style="fill:#cfe7cf;" class="spot l14 r35 tT s0_7"><title>A1-35 [ABL1_3qri_al...] 0.7</title></circle>
+<circle cx="1232" cy="432" r="7.423422" style="fill:#add6ad;" class="spot l14 r36 tT s1_2"><title>A1-36 [ABL1_3qri_al...] 1.2</title></circle>
+<circle cx="1456" cy="432" r="5.166161" style="fill:#d7ebd7;" class="spot l14 r43 tT s0_6"><title>A1-43 [ABL1_3qri_al...] 0.6</title></circle>
+<circle cx="1520" cy="432" r="8.888238" style="fill:#89c489;" class="spot l14 r45 tT s1_8"><title>A1-45 [ABL1_3qri_al...] 1.8</title></circle>
+<circle cx="1552" cy="432" r="7.991788" style="fill:#a0cfa0;" class="spot l14 r46 tT s1_4"><title>A1-46 [ABL1_3qri_al...] 1.4</title></circle>
+<circle cx="1584" cy="432" r="11.658616" style="fill:#349a34;" class="spot l14 r47 tT s3_1"><title>A1-47 [ABL1_3qri_al...] 3.1</title></circle>
+<circle cx="1616" cy="432" r="13.326764" style="fill:#008000;" class="spot l14 r48 tT s4_1"><title>A1-48 [ABL1_3qri_al...] 4.1</title></circle>
+<circle cx="1648" cy="432" r="6.136846" style="fill:#c7e3c7;" class="spot l14 r49 tT s0_8"><title>A1-49 [ABL1_3qri_al...] 0.8</title></circle>
+<circle cx="1712" cy="432" r="8.039663" style="fill:#9ecf9e;" class="spot l14 r51 tT s1_5"><title>A1-51 [ABL1_3qri_al...] 1.5</title></circle>
+<circle cx="2032" cy="432" r="4.057221" style="fill:#e6f3e6;" class="spot l14 r61 tT s0_3"><title>A1-61 [ABL1_3qri_al...] 0.3</title></circle>
+<circle cx="2192" cy="432" r="5.870797" style="fill:#cce5cc;" class="spot l14 r66 tT s0_8"><title>A1-66 [ABL1_3qri_al...] 0.8</title></circle>
+<circle cx="2256" cy="432" r="9.057606" style="fill:#84c284;" class="spot l14 r68 tT s1_9"><title>A1-68 [ABL1_3qri_al...] 1.9</title></circle>
+<circle cx="2544" cy="432" r="8.671732" style="fill:#8fc78f;" class="spot l14 r77 tT s1_7"><title>A1-77 [ABL1_3qri_al...] 1.7</title></circle>
+<circle cx="2608" cy="432" r="6.618665" style="fill:#bedebe;" class="spot l14 r79 tT s1_0"><title>A1-79 [ABL1_3qri_al...] 1.0</title></circle>
+<circle cx="2640" cy="432" r="11.386082" style="fill:#3d9f3d;" class="spot l14 r80 tT s3_0"><title>A1-80 [ABL1_3qri_al...] 3.0</title></circle>
+<circle cx="2672" cy="432" r="10.950871" style="fill:#4ca64c;" class="spot l14 r81 tT s2_8"><title>A1-81 [ABL1_3qri_al...] 2.8</title></circle>
+<circle cx="2704" cy="432" r="7.601375" style="fill:#a9d4a9;" class="spot l14 r82 tT s1_3"><title>A1-82 [ABL1_3qri_al...] 1.3</title></circle>
+<circle cx="176" cy="272" r="6.350868" style="fill:#c3e1c3;" class="spot l3 r3 tT s0_9"><title>A1-3 [ABL1_2hyy_ch...] 0.9</title></circle>
+<circle cx="336" cy="272" r="6.421818" style="fill:#c1e0c1;" class="spot l3 r8 tT s0_9"><title>A1-8 [ABL1_2hyy_ch...] 0.9</title></circle>
+<circle cx="432" cy="272" r="6.767913" style="fill:#bbddbb;" class="spot l3 r11 tT s1_0"><title>A1-11 [ABL1_2hyy_ch...] 1.0</title></circle>
+<circle cx="560" cy="272" r="10.283592" style="fill:#61b061;" class="spot l3 r15 tT s2_4"><title>A1-15 [ABL1_2hyy_ch...] 2.4</title></circle>
+<circle cx="592" cy="272" r="5.440461" style="fill:#d3e9d3;" class="spot l3 r16 tT s0_6"><title>A1-16 [ABL1_2hyy_ch...] 0.6</title></circle>
+<circle cx="624" cy="272" r="8.216478" style="fill:#9acd9a;" class="spot l3 r17 tT s1_5"><title>A1-17 [ABL1_2hyy_ch...] 1.5</title></circle>
+<circle cx="848" cy="272" r="7.445312" style="fill:#acd6ac;" class="spot l3 r24 tT s1_2"><title>A1-24 [ABL1_2hyy_ch...] 1.2</title></circle>
+<circle cx="944" cy="272" r="5.737741" style="fill:#cee7ce;" class="spot l3 r27 tT s0_7"><title>A1-27 [ABL1_2hyy_ch...] 0.7</title></circle>
+<circle cx="976" cy="272" r="8.98184" style="fill:#86c386;" class="spot l3 r28 tT s1_8"><title>A1-28 [ABL1_2hyy_ch...] 1.8</title></circle>
+<circle cx="1072" cy="272" r="5.668644" style="fill:#cfe7cf;" class="spot l3 r31 tT s0_7"><title>A1-31 [ABL1_2hyy_ch...] 0.7</title></circle>
+<circle cx="1232" cy="272" r="7.943153" style="fill:#a1d0a1;" class="spot l3 r36 tT s1_4"><title>A1-36 [ABL1_2hyy_ch...] 1.4</title></circle>
+<circle cx="1456" cy="272" r="7.715732" style="fill:#a6d3a6;" class="spot l3 r43 tT s1_3"><title>A1-43 [ABL1_2hyy_ch...] 1.3</title></circle>
+<circle cx="1520" cy="272" r="11.398955" style="fill:#3d9e3d;" class="spot l3 r45 tT s3_0"><title>A1-45 [ABL1_2hyy_ch...] 3.0</title></circle>
+<circle cx="1552" cy="272" r="4.374803" style="fill:#e2f1e2;" class="spot l3 r46 tT s0_4"><title>A1-46 [ABL1_2hyy_ch...] 0.4</title></circle>
+<circle cx="1584" cy="272" r="11.970398" style="fill:#299429;" class="spot l3 r47 tT s3_3"><title>A1-47 [ABL1_2hyy_ch...] 3.3</title></circle>
+<circle cx="1616" cy="272" r="11.875056" style="fill:#2c962c;" class="spot l3 r48 tT s3_3"><title>A1-48 [ABL1_2hyy_ch...] 3.3</title></circle>
+<circle cx="1712" cy="272" r="6.040475" style="fill:#c8e4c8;" class="spot l3 r51 tT s0_8"><title>A1-51 [ABL1_2hyy_ch...] 0.8</title></circle>
+<circle cx="2192" cy="272" r="3.363223" style="fill:#eef7ee;" class="spot l3 r66 tT s0_2"><title>A1-66 [ABL1_2hyy_ch...] 0.2</title></circle>
+<circle cx="2224" cy="272" r="8.550518" style="fill:#92c992;" class="spot l3 r67 tT s1_7"><title>A1-67 [ABL1_2hyy_ch...] 1.7</title></circle>
+<circle cx="2256" cy="272" r="9.527179" style="fill:#77bb77;" class="spot l3 r68 tT s2_1"><title>A1-68 [ABL1_2hyy_ch...] 2.1</title></circle>
+<circle cx="2288" cy="272" r="4.8148" style="fill:#dceedc;" class="spot l3 r69 tT s0_5"><title>A1-69 [ABL1_2hyy_ch...] 0.5</title></circle>
+<circle cx="2544" cy="272" r="9.413552" style="fill:#7bbd7b;" class="spot l3 r77 tT s2_0"><title>A1-77 [ABL1_2hyy_ch...] 2.0</title></circle>
+<circle cx="2640" cy="272" r="10.64999" style="fill:#56ab56;" class="spot l3 r80 tT s2_6"><title>A1-80 [ABL1_2hyy_ch...] 2.6</title></circle>
+<circle cx="2672" cy="272" r="10.871333" style="fill:#4ea74e;" class="spot l3 r81 tT s2_7"><title>A1-81 [ABL1_2hyy_ch...] 2.7</title></circle>
+<circle cx="2704" cy="272" r="6.806773" style="fill:#baddba;" class="spot l3 r82 tT s1_0"><title>A1-82 [ABL1_2hyy_ch...] 1.0</title></circle>
+<circle cx="176" cy="144" r="6.921053" style="fill:#b7dbb7;" class="spot l9 r3 tT s1_1"><title>A1-3 [ABL1_2e2b_ch...] 1.1</title></circle>
+<circle cx="336" cy="144" r="6.77949" style="fill:#baddba;" class="spot l9 r8 tT s1_0"><title>A1-8 [ABL1_2e2b_ch...] 1.0</title></circle>
+<circle cx="432" cy="144" r="6.745457" style="fill:#bbddbb;" class="spot l9 r11 tT s1_0"><title>A1-11 [ABL1_2e2b_ch...] 1.0</title></circle>
+<circle cx="560" cy="144" r="10.481192" style="fill:#5bad5b;" class="spot l9 r15 tT s2_5"><title>A1-15 [ABL1_2e2b_ch...] 2.5</title></circle>
+<circle cx="592" cy="144" r="5.849282" style="fill:#cce6cc;" class="spot l9 r16 tT s0_8"><title>A1-16 [ABL1_2e2b_ch...] 0.8</title></circle>
+<circle cx="624" cy="144" r="8.795583" style="fill:#8bc58b;" class="spot l9 r17 tT s1_8"><title>A1-17 [ABL1_2e2b_ch...] 1.8</title></circle>
+<circle cx="848" cy="144" r="7.685106" style="fill:#a7d3a7;" class="spot l9 r24 tT s1_3"><title>A1-24 [ABL1_2e2b_ch...] 1.3</title></circle>
+<circle cx="944" cy="144" r="6.270512" style="fill:#c4e2c4;" class="spot l9 r27 tT s0_9"><title>A1-27 [ABL1_2e2b_ch...] 0.9</title></circle>
+<circle cx="976" cy="144" r="9.210852" style="fill:#80c080;" class="spot l9 r28 tT s1_9"><title>A1-28 [ABL1_2e2b_ch...] 1.9</title></circle>
+<circle cx="1072" cy="144" r="6.376972" style="fill:#c2e1c2;" class="spot l9 r31 tT s0_9"><title>A1-31 [ABL1_2e2b_ch...] 0.9</title></circle>
+<circle cx="1200" cy="144" r="8.257565" style="fill:#99cc99;" class="spot l9 r35 tT s1_5"><title>A1-35 [ABL1_2e2b_ch...] 1.5</title></circle>
+<circle cx="1232" cy="144" r="7.882253" style="fill:#a2d1a2;" class="spot l9 r36 tT s1_4"><title>A1-36 [ABL1_2e2b_ch...] 1.4</title></circle>
+<circle cx="1456" cy="144" r="8.665338" style="fill:#8fc78f;" class="spot l9 r43 tT s1_7"><title>A1-43 [ABL1_2e2b_ch...] 1.7</title></circle>
+<circle cx="1520" cy="144" r="11.197832" style="fill:#44a244;" class="spot l9 r45 tT s2_9"><title>A1-45 [ABL1_2e2b_ch...] 2.9</title></circle>
+<circle cx="1552" cy="144" r="5.208432" style="fill:#d6ebd6;" class="spot l9 r46 tT s0_6"><title>A1-46 [ABL1_2e2b_ch...] 0.6</title></circle>
+<circle cx="1584" cy="144" r="12.84656" style="fill:#088408;" class="spot l9 r47 tT s3_8"><title>A1-47 [ABL1_2e2b_ch...] 3.8</title></circle>
+<circle cx="1616" cy="144" r="13.164417" style="fill:#008000;" class="spot l9 r48 tT s4_0"><title>A1-48 [ABL1_2e2b_ch...] 4.0</title></circle>
+<circle cx="1712" cy="144" r="6.978008" style="fill:#b6dbb6;" class="spot l9 r51 tT s1_1"><title>A1-51 [ABL1_2e2b_ch...] 1.1</title></circle>
+<circle cx="2032" cy="144" r="6.480799" style="fill:#c0e0c0;" class="spot l9 r61 tT s0_9"><title>A1-61 [ABL1_2e2b_ch...] 0.9</title></circle>
+<circle cx="2192" cy="144" r="4.926224" style="fill:#dbeddb;" class="spot l9 r66 tT s0_5"><title>A1-66 [ABL1_2e2b_ch...] 0.5</title></circle>
+<circle cx="2224" cy="144" r="8.509871" style="fill:#93c993;" class="spot l9 r67 tT s1_6"><title>A1-67 [ABL1_2e2b_ch...] 1.6</title></circle>
+<circle cx="2256" cy="144" r="11.922891" style="fill:#2b952b;" class="spot l9 r68 tT s3_3"><title>A1-68 [ABL1_2e2b_ch...] 3.3</title></circle>
+<circle cx="2288" cy="144" r="6.720005" style="fill:#bcddbc;" class="spot l9 r69 tT s1_0"><title>A1-69 [ABL1_2e2b_ch...] 1.0</title></circle>
+<circle cx="2544" cy="144" r="8.152495" style="fill:#9cce9c;" class="spot l9 r77 tT s1_5"><title>A1-77 [ABL1_2e2b_ch...] 1.5</title></circle>
+<circle cx="2608" cy="144" r="9.822344" style="fill:#6fb76f;" class="spot l9 r79 tT s2_2"><title>A1-79 [ABL1_2e2b_ch...] 2.2</title></circle>
+<circle cx="2640" cy="144" r="11.722116" style="fill:#329932;" class="spot l9 r80 tT s3_2"><title>A1-80 [ABL1_2e2b_ch...] 3.2</title></circle>
+<circle cx="2672" cy="144" r="11.035535" style="fill:#49a449;" class="spot l9 r81 tT s2_8"><title>A1-81 [ABL1_2e2b_ch...] 2.8</title></circle>
+<circle cx="2704" cy="144" r="7.087052" style="fill:#b4dab4;" class="spot l9 r82 tT s1_1"><title>A1-82 [ABL1_2e2b_ch...] 1.1</title></circle>
+<circle cx="176" cy="528" r="6.49506" style="fill:#c0e0c0;" class="spot l11 r3 tT s0_9"><title>A1-3 [ABL1_5hu9_al...] 0.9</title></circle>
+<circle cx="432" cy="528" r="5.210197" style="fill:#d6ebd6;" class="spot l11 r11 tT s0_6"><title>A1-11 [ABL1_5hu9_al...] 0.6</title></circle>
+<circle cx="560" cy="528" r="10.118547" style="fill:#66b366;" class="spot l11 r15 tT s2_3"><title>A1-15 [ABL1_5hu9_al...] 2.3</title></circle>
+<circle cx="592" cy="528" r="6.538272" style="fill:#bfdfbf;" class="spot l11 r16 tT s1_0"><title>A1-16 [ABL1_5hu9_al...] 1.0</title></circle>
+<circle cx="624" cy="528" r="10.41825" style="fill:#5dae5d;" class="spot l11 r17 tT s2_5"><title>A1-17 [ABL1_5hu9_al...] 2.5</title></circle>
+<circle cx="848" cy="528" r="7.389973" style="fill:#add6ad;" class="spot l11 r24 tT s1_2"><title>A1-24 [ABL1_5hu9_al...] 1.2</title></circle>
+<circle cx="944" cy="528" r="4.509873" style="fill:#e1f0e1;" class="spot l11 r27 tT s0_4"><title>A1-27 [ABL1_5hu9_al...] 0.4</title></circle>
+<circle cx="976" cy="528" r="9.423261" style="fill:#7abd7a;" class="spot l11 r28 tT s2_0"><title>A1-28 [ABL1_5hu9_al...] 2.0</title></circle>
+<circle cx="1072" cy="528" r="6.360051" style="fill:#c3e1c3;" class="spot l11 r31 tT s0_9"><title>A1-31 [ABL1_5hu9_al...] 0.9</title></circle>
+<circle cx="1200" cy="528" r="7.554322" style="fill:#aad5aa;" class="spot l11 r35 tT s1_3"><title>A1-35 [ABL1_5hu9_al...] 1.3</title></circle>
+<circle cx="1232" cy="528" r="7.748373" style="fill:#a5d2a5;" class="spot l11 r36 tT s1_4"><title>A1-36 [ABL1_5hu9_al...] 1.4</title></circle>
+<circle cx="1456" cy="528" r="8.555208" style="fill:#92c992;" class="spot l11 r43 tT s1_7"><title>A1-43 [ABL1_5hu9_al...] 1.7</title></circle>
+<circle cx="1520" cy="528" r="9.979604" style="fill:#6ab56a;" class="spot l11 r45 tT s2_3"><title>A1-45 [ABL1_5hu9_al...] 2.3</title></circle>
+<circle cx="1552" cy="528" r="7.313695" style="fill:#afd7af;" class="spot l11 r46 tT s1_2"><title>A1-46 [ABL1_5hu9_al...] 1.2</title></circle>
+<circle cx="1584" cy="528" r="12.451066" style="fill:#178c17;" class="spot l11 r47 tT s3_6"><title>A1-47 [ABL1_5hu9_al...] 3.6</title></circle>
+<circle cx="1616" cy="528" r="12.31659" style="fill:#1c8e1c;" class="spot l11 r48 tT s3_5"><title>A1-48 [ABL1_5hu9_al...] 3.5</title></circle>
+<circle cx="1712" cy="528" r="8.061959" style="fill:#9ecf9e;" class="spot l11 r51 tT s1_5"><title>A1-51 [ABL1_5hu9_al...] 1.5</title></circle>
+<circle cx="1744" cy="528" r="4.42996" style="fill:#e2f0e2;" class="spot l11 r52 tT s0_4"><title>A1-52 [ABL1_5hu9_al...] 0.4</title></circle>
+<circle cx="2032" cy="528" r="6.037457" style="fill:#c9e4c9;" class="spot l11 r61 tT s0_8"><title>A1-61 [ABL1_5hu9_al...] 0.8</title></circle>
+<circle cx="2192" cy="528" r="2.474345" style="fill:#f6faf6;" class="spot l11 r66 tT s0_1"><title>A1-66 [ABL1_5hu9_al...] 0.1</title></circle>
+<circle cx="2224" cy="528" r="8.695852" style="fill:#8ec78e;" class="spot l11 r67 tT s1_7"><title>A1-67 [ABL1_5hu9_al...] 1.7</title></circle>
+<circle cx="2256" cy="528" r="12.692915" style="fill:#0e870e;" class="spot l11 r68 tT s3_7"><title>A1-68 [ABL1_5hu9_al...] 3.7</title></circle>
+<circle cx="2288" cy="528" r="4.261233" style="fill:#e4f1e4;" class="spot l11 r69 tT s0_4"><title>A1-69 [ABL1_5hu9_al...] 0.4</title></circle>
+<circle cx="2544" cy="528" r="9.603702" style="fill:#75ba75;" class="spot l11 r77 tT s2_1"><title>A1-77 [ABL1_5hu9_al...] 2.1</title></circle>
+<circle cx="2608" cy="528" r="9.512461" style="fill:#78bc78;" class="spot l11 r79 tT s2_1"><title>A1-79 [ABL1_5hu9_al...] 2.1</title></circle>
+<circle cx="2640" cy="528" r="11.849432" style="fill:#2d972d;" class="spot l11 r80 tT s3_2"><title>A1-80 [ABL1_5hu9_al...] 3.2</title></circle>
+<circle cx="2672" cy="528" r="10.58131" style="fill:#58ac58;" class="spot l11 r81 tT s2_6"><title>A1-81 [ABL1_5hu9_al...] 2.6</title></circle>
+<circle cx="2704" cy="528" r="6.064214" style="fill:#c8e4c8;" class="spot l11 r82 tT s0_8"><title>A1-82 [ABL1_5hu9_al...] 0.8</title></circle>
+<circle cx="176" cy="112" r="6.919331" style="fill:#b7dbb7;" class="spot l2 r3 tT s1_1"><title>A1-3 [ABL1_1opl_ch...] 1.1</title></circle>
+<circle cx="336" cy="112" r="5.894829" style="fill:#cbe5cb;" class="spot l2 r8 tT s0_8"><title>A1-8 [ABL1_1opl_ch...] 0.8</title></circle>
+<circle cx="432" cy="112" r="7.230933" style="fill:#b1d8b1;" class="spot l2 r11 tT s1_2"><title>A1-11 [ABL1_1opl_ch...] 1.2</title></circle>
+<circle cx="560" cy="112" r="10.445793" style="fill:#5cae5c;" class="spot l2 r15 tT s2_5"><title>A1-15 [ABL1_1opl_ch...] 2.5</title></circle>
+<circle cx="592" cy="112" r="5.968911" style="fill:#cae4ca;" class="spot l2 r16 tT s0_8"><title>A1-16 [ABL1_1opl_ch...] 0.8</title></circle>
+<circle cx="624" cy="112" r="7.887949" style="fill:#a2d1a2;" class="spot l2 r17 tT s1_4"><title>A1-17 [ABL1_1opl_ch...] 1.4</title></circle>
+<circle cx="848" cy="112" r="4.642215" style="fill:#dfefdf;" class="spot l2 r24 tT s0_5"><title>A1-24 [ABL1_1opl_ch...] 0.5</title></circle>
+<circle cx="976" cy="112" r="6.989798" style="fill:#b6dbb6;" class="spot l2 r28 tT s1_1"><title>A1-28 [ABL1_1opl_ch...] 1.1</title></circle>
+<circle cx="1232" cy="112" r="7.072404" style="fill:#b4dab4;" class="spot l2 r36 tT s1_1"><title>A1-36 [ABL1_1opl_ch...] 1.1</title></circle>
+<circle cx="1456" cy="112" r="6.87746" style="fill:#b8dcb8;" class="spot l2 r43 tT s1_1"><title>A1-43 [ABL1_1opl_ch...] 1.1</title></circle>
+<circle cx="1520" cy="112" r="9.603939" style="fill:#75ba75;" class="spot l2 r45 tT s2_1"><title>A1-45 [ABL1_1opl_ch...] 2.1</title></circle>
+<circle cx="1552" cy="112" r="7.406523" style="fill:#add6ad;" class="spot l2 r46 tT s1_2"><title>A1-46 [ABL1_1opl_ch...] 1.2</title></circle>
+<circle cx="1584" cy="112" r="11.639683" style="fill:#359a35;" class="spot l2 r47 tT s3_1"><title>A1-47 [ABL1_1opl_ch...] 3.1</title></circle>
+<circle cx="1616" cy="112" r="13.931414" style="fill:#008000;" class="spot l2 r48 tT s4_5"><title>A1-48 [ABL1_1opl_ch...] 4.5</title></circle>
+<circle cx="1648" cy="112" r="5.470984" style="fill:#d2e9d2;" class="spot l2 r49 tT s0_7"><title>A1-49 [ABL1_1opl_ch...] 0.7</title></circle>
+<circle cx="1680" cy="112" r="4.339614" style="fill:#e3f1e3;" class="spot l2 r50 tT s0_4"><title>A1-50 [ABL1_1opl_ch...] 0.4</title></circle>
+<circle cx="1712" cy="112" r="10.613353" style="fill:#57ab57;" class="spot l2 r51 tT s2_6"><title>A1-51 [ABL1_1opl_ch...] 2.6</title></circle>
+<circle cx="1744" cy="112" r="3.006382" style="fill:#f1f8f1;" class="spot l2 r52 tT s0_2"><title>A1-52 [ABL1_1opl_ch...] 0.2</title></circle>
+<circle cx="2544" cy="112" r="10.012767" style="fill:#69b469;" class="spot l2 r77 tT s2_3"><title>A1-77 [ABL1_1opl_ch...] 2.3</title></circle>
+<circle cx="2640" cy="112" r="9.290482" style="fill:#7ebf7e;" class="spot l2 r80 tT s2_0"><title>A1-80 [ABL1_1opl_ch...] 2.0</title></circle>
+<circle cx="2672" cy="112" r="6.760343" style="fill:#bbddbb;" class="spot l2 r81 tT s1_0"><title>A1-81 [ABL1_1opl_ch...] 1.0</title></circle>
+<circle cx="2704" cy="112" r="6.993233" style="fill:#b6dbb6;" class="spot l2 r82 tT s1_1"><title>A1-82 [ABL1_1opl_ch...] 1.1</title></circle>
+<circle cx="176" cy="208" r="9.354598" style="fill:#7cbe7c;" class="spot l4 r3 tT s2_0"><title>A1-3 [ABL1_2gqg_al...] 2.0</title></circle>
+<circle cx="336" cy="208" r="3.609481" style="fill:#ecf5ec;" class="spot l4 r8 tT s0_3"><title>A1-8 [ABL1_2gqg_al...] 0.3</title></circle>
+<circle cx="432" cy="208" r="5.203655" style="fill:#d7ebd7;" class="spot l4 r11 tT s0_6"><title>A1-11 [ABL1_2gqg_al...] 0.6</title></circle>
+<circle cx="560" cy="208" r="11.002132" style="fill:#4aa54a;" class="spot l4 r15 tT s2_8"><title>A1-15 [ABL1_2gqg_al...] 2.8</title></circle>
+<circle cx="592" cy="208" r="6.084583" style="fill:#c8e3c8;" class="spot l4 r16 tT s0_8"><title>A1-16 [ABL1_2gqg_al...] 0.8</title></circle>
+<circle cx="624" cy="208" r="8.195853" style="fill:#9bcd9b;" class="spot l4 r17 tT s1_5"><title>A1-17 [ABL1_2gqg_al...] 1.5</title></circle>
+<circle cx="848" cy="208" r="5.645752" style="fill:#cfe7cf;" class="spot l4 r24 tT s0_7"><title>A1-24 [ABL1_2gqg_al...] 0.7</title></circle>
+<circle cx="976" cy="208" r="6.887404" style="fill:#b8dcb8;" class="spot l4 r28 tT s1_1"><title>A1-28 [ABL1_2gqg_al...] 1.1</title></circle>
+<circle cx="1232" cy="208" r="8.081094" style="fill:#9dce9d;" class="spot l4 r36 tT s1_5"><title>A1-36 [ABL1_2gqg_al...] 1.5</title></circle>
+<circle cx="1456" cy="208" r="8.108928" style="fill:#9dce9d;" class="spot l4 r43 tT s1_5"><title>A1-43 [ABL1_2gqg_al...] 1.5</title></circle>
+<circle cx="1520" cy="208" r="11.449785" style="fill:#3b9d3b;" class="spot l4 r45 tT s3_0"><title>A1-45 [ABL1_2gqg_al...] 3.0</title></circle>
+<circle cx="1552" cy="208" r="6.990231" style="fill:#b6dbb6;" class="spot l4 r46 tT s1_1"><title>A1-46 [ABL1_2gqg_al...] 1.1</title></circle>
+<circle cx="1584" cy="208" r="11.733615" style="fill:#319931;" class="spot l4 r47 tT s3_2"><title>A1-47 [ABL1_2gqg_al...] 3.2</title></circle>
+<circle cx="1616" cy="208" r="14.075859" style="fill:#008000;" class="spot l4 r48 tT s4_6"><title>A1-48 [ABL1_2gqg_al...] 4.6</title></circle>
+<circle cx="1648" cy="208" r="8.566188" style="fill:#91c891;" class="spot l4 r49 tT s1_7"><title>A1-49 [ABL1_2gqg_al...] 1.7</title></circle>
+<circle cx="1680" cy="208" r="8.96401" style="fill:#87c387;" class="spot l4 r50 tT s1_8"><title>A1-50 [ABL1_2gqg_al...] 1.8</title></circle>
+<circle cx="1712" cy="208" r="10.229331" style="fill:#63b163;" class="spot l4 r51 tT s2_4"><title>A1-51 [ABL1_2gqg_al...] 2.4</title></circle>
+<circle cx="2544" cy="208" r="9.503863" style="fill:#78bc78;" class="spot l4 r77 tT s2_1"><title>A1-77 [ABL1_2gqg_al...] 2.1</title></circle>
+<circle cx="2640" cy="208" r="8.825943" style="fill:#8bc58b;" class="spot l4 r80 tT s1_8"><title>A1-80 [ABL1_2gqg_al...] 1.8</title></circle>
+<circle cx="2672" cy="208" r="5.219171" style="fill:#d6ebd6;" class="spot l4 r81 tT s0_6"><title>A1-81 [ABL1_2gqg_al...] 0.6</title></circle>
+<circle cx="2704" cy="208" r="4.065511" style="fill:#e6f3e6;" class="spot l4 r82 tT s0_3"><title>A1-82 [ABL1_2gqg_al...] 0.3</title></circle>
+<circle cx="176" cy="496" r="7.464084" style="fill:#acd6ac;" class="spot l10 r3 tT s1_3"><title>A1-3 [ABL1_4yc8_ch...] 1.3</title></circle>
+<circle cx="432" cy="496" r="4.762412" style="fill:#ddeedd;" class="spot l10 r11 tT s0_5"><title>A1-11 [ABL1_4yc8_ch...] 0.5</title></circle>
+<circle cx="560" cy="496" r="9.680672" style="fill:#73b973;" class="spot l10 r15 tT s2_1"><title>A1-15 [ABL1_4yc8_ch...] 2.1</title></circle>
+<circle cx="624" cy="496" r="7.07335" style="fill:#b4dab4;" class="spot l10 r17 tT s1_1"><title>A1-17 [ABL1_4yc8_ch...] 1.1</title></circle>
+<circle cx="752" cy="496" r="6.802777" style="fill:#baddba;" class="spot l10 r21 tT s1_0"><title>A1-21 [ABL1_4yc8_ch...] 1.0</title></circle>
+<circle cx="848" cy="496" r="6.046123" style="fill:#c8e4c8;" class="spot l10 r24 tT s0_8"><title>A1-24 [ABL1_4yc8_ch...] 0.8</title></circle>
+<circle cx="880" cy="496" r="7.148829" style="fill:#b3d9b3;" class="spot l10 r25 tT s1_1"><title>A1-25 [ABL1_4yc8_ch...] 1.1</title></circle>
+<circle cx="976" cy="496" r="5.832242" style="fill:#cce6cc;" class="spot l10 r28 tT s0_7"><title>A1-28 [ABL1_4yc8_ch...] 0.7</title></circle>
+<circle cx="1456" cy="496" r="10.4973" style="fill:#5aad5a;" class="spot l10 r43 tT s2_5"><title>A1-43 [ABL1_4yc8_ch...] 2.5</title></circle>
+<circle cx="1520" cy="496" r="11.059329" style="fill:#48a448;" class="spot l10 r45 tT s2_8"><title>A1-45 [ABL1_4yc8_ch...] 2.8</title></circle>
+<circle cx="1552" cy="496" r="6.736236" style="fill:#bbddbb;" class="spot l10 r46 tT s1_0"><title>A1-46 [ABL1_4yc8_ch...] 1.0</title></circle>
+<circle cx="1584" cy="496" r="11.843286" style="fill:#2d972d;" class="spot l10 r47 tT s3_2"><title>A1-47 [ABL1_4yc8_ch...] 3.2</title></circle>
+<circle cx="1616" cy="496" r="14.030766" style="fill:#008000;" class="spot l10 r48 tT s4_6"><title>A1-48 [ABL1_4yc8_ch...] 4.6</title></circle>
+<circle cx="1648" cy="496" r="8.511909" style="fill:#93c993;" class="spot l10 r49 tT s1_6"><title>A1-49 [ABL1_4yc8_ch...] 1.6</title></circle>
+<circle cx="1680" cy="496" r="6.471367" style="fill:#c0e0c0;" class="spot l10 r50 tT s0_9"><title>A1-50 [ABL1_4yc8_ch...] 0.9</title></circle>
+<circle cx="1712" cy="496" r="9.963194" style="fill:#6bb56b;" class="spot l10 r51 tT s2_3"><title>A1-51 [ABL1_4yc8_ch...] 2.3</title></circle>
+<circle cx="2544" cy="496" r="8.681071" style="fill:#8ec78e;" class="spot l10 r77 tT s1_7"><title>A1-77 [ABL1_4yc8_ch...] 1.7</title></circle>
+<circle cx="2704" cy="496" r="9.196273" style="fill:#81c081;" class="spot l10 r82 tT s1_9"><title>A1-82 [ABL1_4yc8_ch...] 1.9</title></circle>
+<circle cx="176" cy="560" r="9.778249" style="fill:#70b870;" class="spot l5 r3 tT s2_2"><title>A1-3 [ABL1_6bl8_al...] 2.2</title></circle>
+<circle cx="432" cy="560" r="6.657521" style="fill:#bddebd;" class="spot l5 r11 tT s1_0"><title>A1-11 [ABL1_6bl8_al...] 1.0</title></circle>
+<circle cx="560" cy="560" r="8.472154" style="fill:#94ca94;" class="spot l5 r15 tT s1_6"><title>A1-15 [ABL1_6bl8_al...] 1.6</title></circle>
+<circle cx="1232" cy="560" r="6.752835" style="fill:#bbddbb;" class="spot l5 r36 tT s1_0"><title>A1-36 [ABL1_6bl8_al...] 1.0</title></circle>
+<circle cx="1520" cy="560" r="8.000136" style="fill:#9fcf9f;" class="spot l5 r45 tT s1_5"><title>A1-45 [ABL1_6bl8_al...] 1.5</title></circle>
+<circle cx="1552" cy="560" r="7.5349" style="fill:#aad5aa;" class="spot l5 r46 tT s1_3"><title>A1-46 [ABL1_6bl8_al...] 1.3</title></circle>
+<circle cx="1584" cy="560" r="11.789566" style="fill:#2f982f;" class="spot l5 r47 tT s3_2"><title>A1-47 [ABL1_6bl8_al...] 3.2</title></circle>
+<circle cx="1616" cy="560" r="13.61413" style="fill:#008000;" class="spot l5 r48 tT s4_3"><title>A1-48 [ABL1_6bl8_al...] 4.3</title></circle>
+<circle cx="1648" cy="560" r="8.937578" style="fill:#88c488;" class="spot l5 r49 tT s1_8"><title>A1-49 [ABL1_6bl8_al...] 1.8</title></circle>
+<circle cx="1680" cy="560" r="6.671451" style="fill:#bcdebc;" class="spot l5 r50 tT s1_0"><title>A1-50 [ABL1_6bl8_al...] 1.0</title></circle>
+<circle cx="1712" cy="560" r="10.345043" style="fill:#5faf5f;" class="spot l5 r51 tT s2_5"><title>A1-51 [ABL1_6bl8_al...] 2.5</title></circle>
+<circle cx="1744" cy="560" r="8.417046" style="fill:#95ca95;" class="spot l5 r52 tT s1_6"><title>A1-52 [ABL1_6bl8_al...] 1.6</title></circle>
+<circle cx="2448" cy="560" r="5.419508" style="fill:#d3e9d3;" class="spot l5 r74 tT s0_6"><title>A1-74 [ABL1_6bl8_al...] 0.6</title></circle>
+<circle cx="2544" cy="560" r="10.603412" style="fill:#57ab57;" class="spot l5 r77 tT s2_6"><title>A1-77 [ABL1_6bl8_al...] 2.6</title></circle>
+<circle cx="2640" cy="560" r="4.354433" style="fill:#e3f1e3;" class="spot l5 r80 tT s0_4"><title>A1-80 [ABL1_6bl8_al...] 0.4</title></circle>
+<circle cx="2704" cy="560" r="4.93937" style="fill:#dbeddb;" class="spot l5 r82 tT s0_5"><title>A1-82 [ABL1_6bl8_al...] 0.5</title></circle>
+<circle cx="176" cy="176" r="8.521121" style="fill:#93c993;" class="spot l7 r3 tT s1_7"><title>A1-3 [ABL1_2f4j_ch...] 1.7</title></circle>
+<circle cx="336" cy="176" r="6.935765" style="fill:#b7dbb7;" class="spot l7 r8 tT s1_1"><title>A1-8 [ABL1_2f4j_ch...] 1.1</title></circle>
+<circle cx="432" cy="176" r="7.700647" style="fill:#a6d3a6;" class="spot l7 r11 tT s1_3"><title>A1-11 [ABL1_2f4j_ch...] 1.3</title></circle>
+<circle cx="560" cy="176" r="8.733411" style="fill:#8dc68d;" class="spot l7 r15 tT s1_7"><title>A1-15 [ABL1_2f4j_ch...] 1.7</title></circle>
+<circle cx="624" cy="176" r="6.939952" style="fill:#b7dbb7;" class="spot l7 r17 tT s1_1"><title>A1-17 [ABL1_2f4j_ch...] 1.1</title></circle>
+<circle cx="848" cy="176" r="3.504467" style="fill:#edf6ed;" class="spot l7 r24 tT s0_2"><title>A1-24 [ABL1_2f4j_ch...] 0.2</title></circle>
+<circle cx="976" cy="176" r="5.137527" style="fill:#d8ebd8;" class="spot l7 r28 tT s0_6"><title>A1-28 [ABL1_2f4j_ch...] 0.6</title></circle>
+<circle cx="1232" cy="176" r="5.043997" style="fill:#d9ecd9;" class="spot l7 r36 tT s0_5"><title>A1-36 [ABL1_2f4j_ch...] 0.5</title></circle>
+<circle cx="1456" cy="176" r="4.826504" style="fill:#dceedc;" class="spot l7 r43 tT s0_5"><title>A1-43 [ABL1_2f4j_ch...] 0.5</title></circle>
+<circle cx="1520" cy="176" r="8.232713" style="fill:#9acd9a;" class="spot l7 r45 tT s1_5"><title>A1-45 [ABL1_2f4j_ch...] 1.5</title></circle>
+<circle cx="1552" cy="176" r="8.512265" style="fill:#93c993;" class="spot l7 r46 tT s1_6"><title>A1-46 [ABL1_2f4j_ch...] 1.6</title></circle>
+<circle cx="1584" cy="176" r="12.811204" style="fill:#0a850a;" class="spot l7 r47 tT s3_8"><title>A1-47 [ABL1_2f4j_ch...] 3.8</title></circle>
+<circle cx="1616" cy="176" r="14.024143" style="fill:#008000;" class="spot l7 r48 tT s4_6"><title>A1-48 [ABL1_2f4j_ch...] 4.6</title></circle>
+<circle cx="1648" cy="176" r="8.294765" style="fill:#98cc98;" class="spot l7 r49 tT s1_6"><title>A1-49 [ABL1_2f4j_ch...] 1.6</title></circle>
+<circle cx="1680" cy="176" r="7.35594" style="fill:#aed7ae;" class="spot l7 r50 tT s1_2"><title>A1-50 [ABL1_2f4j_ch...] 1.2</title></circle>
+<circle cx="1712" cy="176" r="10.54033" style="fill:#59ac59;" class="spot l7 r51 tT s2_6"><title>A1-51 [ABL1_2f4j_ch...] 2.6</title></circle>
+<circle cx="2544" cy="176" r="9.996469" style="fill:#6ab56a;" class="spot l7 r77 tT s2_3"><title>A1-77 [ABL1_2f4j_ch...] 2.3</title></circle>
+<circle cx="2672" cy="176" r="3.985589" style="fill:#e7f3e7;" class="spot l7 r81 tT s0_3"><title>A1-81 [ABL1_2f4j_ch...] 0.3</title></circle>
+<circle cx="2704" cy="176" r="4.138366" style="fill:#e5f2e5;" class="spot l7 r82 tT s0_4"><title>A1-82 [ABL1_2f4j_ch...] 0.4</title></circle>
+<circle cx="176" cy="368" r="7.984781" style="fill:#a0d0a0;" class="spot l12 r3 tT s1_4"><title>A1-3 [ABL1_2v7a_ch...] 1.4</title></circle>
+<circle cx="432" cy="368" r="4.17853" style="fill:#e5f2e5;" class="spot l12 r11 tT s0_4"><title>A1-11 [ABL1_2v7a_ch...] 0.4</title></circle>
+<circle cx="560" cy="368" r="8.470586" style="fill:#94ca94;" class="spot l12 r15 tT s1_6"><title>A1-15 [ABL1_2v7a_ch...] 1.6</title></circle>
+<circle cx="624" cy="368" r="8.360294" style="fill:#97cb97;" class="spot l12 r17 tT s1_6"><title>A1-17 [ABL1_2v7a_ch...] 1.6</title></circle>
+<circle cx="1232" cy="368" r="3.931011" style="fill:#e8f4e8;" class="spot l12 r36 tT s0_3"><title>A1-36 [ABL1_2v7a_ch...] 0.3</title></circle>
+<circle cx="1520" cy="368" r="6.876746" style="fill:#b8dcb8;" class="spot l12 r45 tT s1_1"><title>A1-45 [ABL1_2v7a_ch...] 1.1</title></circle>
+<circle cx="1552" cy="368" r="8.197613" style="fill:#9bcd9b;" class="spot l12 r46 tT s1_5"><title>A1-46 [ABL1_2v7a_ch...] 1.5</title></circle>
+<circle cx="1584" cy="368" r="11.499444" style="fill:#399d39;" class="spot l12 r47 tT s3_0"><title>A1-47 [ABL1_2v7a_ch...] 3.0</title></circle>
+<circle cx="1616" cy="368" r="13.099789" style="fill:#008000;" class="spot l12 r48 tT s4_0"><title>A1-48 [ABL1_2v7a_ch...] 4.0</title></circle>
+<circle cx="1648" cy="368" r="9.098012" style="fill:#83c183;" class="spot l12 r49 tT s1_9"><title>A1-49 [ABL1_2v7a_ch...] 1.9</title></circle>
+<circle cx="1680" cy="368" r="6.690828" style="fill:#bcdebc;" class="spot l12 r50 tT s1_0"><title>A1-50 [ABL1_2v7a_ch...] 1.0</title></circle>
+<circle cx="1712" cy="368" r="10.263142" style="fill:#62b162;" class="spot l12 r51 tT s2_4"><title>A1-51 [ABL1_2v7a_ch...] 2.4</title></circle>
+<circle cx="1744" cy="368" r="6.806517" style="fill:#baddba;" class="spot l12 r52 tT s1_0"><title>A1-52 [ABL1_2v7a_ch...] 1.0</title></circle>
+<circle cx="2448" cy="368" r="7.975125" style="fill:#a0d0a0;" class="spot l12 r74 tT s1_4"><title>A1-74 [ABL1_2v7a_ch...] 1.4</title></circle>
+<circle cx="2480" cy="368" r="8.410092" style="fill:#95ca95;" class="spot l12 r75 tT s1_6"><title>A1-75 [ABL1_2v7a_ch...] 1.6</title></circle>
+<circle cx="2544" cy="368" r="11.288452" style="fill:#41a041;" class="spot l12 r77 tT s2_9"><title>A1-77 [ABL1_2v7a_ch...] 2.9</title></circle>
+<circle cx="2640" cy="368" r="6.56525" style="fill:#bfdfbf;" class="spot l12 r80 tT s1_0"><title>A1-80 [ABL1_2v7a_ch...] 1.0</title></circle>
+<circle cx="2672" cy="368" r="6.943452" style="fill:#b7dbb7;" class="spot l12 r81 tT s1_1"><title>A1-81 [ABL1_2v7a_ch...] 1.1</title></circle>
+<circle cx="176" cy="336" r="9.975121" style="fill:#6ab56a;" class="spot l15 r3 tT s2_3"><title>A1-3 [ABL1_2hz4_ch...] 2.3</title></circle>
+<circle cx="432" cy="336" r="7.33331" style="fill:#afd7af;" class="spot l15 r11 tT s1_2"><title>A1-11 [ABL1_2hz4_ch...] 1.2</title></circle>
+<circle cx="560" cy="336" r="8.785171" style="fill:#8cc68c;" class="spot l15 r15 tT s1_8"><title>A1-15 [ABL1_2hz4_ch...] 1.8</title></circle>
+<circle cx="624" cy="336" r="5.941065" style="fill:#cae5ca;" class="spot l15 r17 tT s0_8"><title>A1-17 [ABL1_2hz4_ch...] 0.8</title></circle>
+<circle cx="848" cy="336" r="3.483586" style="fill:#edf6ed;" class="spot l15 r24 tT s0_2"><title>A1-24 [ABL1_2hz4_ch...] 0.2</title></circle>
+<circle cx="1232" cy="336" r="5.90374" style="fill:#cbe5cb;" class="spot l15 r36 tT s0_8"><title>A1-36 [ABL1_2hz4_ch...] 0.8</title></circle>
+<circle cx="1520" cy="336" r="7.038674" style="fill:#b5dab5;" class="spot l15 r45 tT s1_1"><title>A1-45 [ABL1_2hz4_ch...] 1.1</title></circle>
+<circle cx="1552" cy="336" r="8.319955" style="fill:#98cb98;" class="spot l15 r46 tT s1_6"><title>A1-46 [ABL1_2hz4_ch...] 1.6</title></circle>
+<circle cx="1584" cy="336" r="12.304602" style="fill:#1d8e1d;" class="spot l15 r47 tT s3_5"><title>A1-47 [ABL1_2hz4_ch...] 3.5</title></circle>
+<circle cx="1616" cy="336" r="12.764001" style="fill:#0c860c;" class="spot l15 r48 tT s3_8"><title>A1-48 [ABL1_2hz4_ch...] 3.8</title></circle>
+<circle cx="1712" cy="336" r="7.111957" style="fill:#b3d9b3;" class="spot l15 r51 tT s1_1"><title>A1-51 [ABL1_2hz4_ch...] 1.1</title></circle>
+<circle cx="1744" cy="336" r="6.731059" style="fill:#bbddbb;" class="spot l15 r52 tT s1_0"><title>A1-52 [ABL1_2hz4_ch...] 1.0</title></circle>
+<circle cx="2448" cy="336" r="11.221596" style="fill:#43a143;" class="spot l15 r74 tT s2_9"><title>A1-74 [ABL1_2hz4_ch...] 2.9</title></circle>
+<circle cx="2480" cy="336" r="8.648994" style="fill:#8fc78f;" class="spot l15 r75 tT s1_7"><title>A1-75 [ABL1_2hz4_ch...] 1.7</title></circle>
+<circle cx="2544" cy="336" r="10.942842" style="fill:#4ca64c;" class="spot l15 r77 tT s2_8"><title>A1-77 [ABL1_2hz4_ch...] 2.8</title></circle>
+<circle cx="2672" cy="336" r="8.920988" style="fill:#88c488;" class="spot l15 r81 tT s1_8"><title>A1-81 [ABL1_2hz4_ch...] 1.8</title></circle>
+</g>
+<g class="mut" style="font-size:10px;">
+<text x="326" y="486" style="dominant-baseline:central;"><title>A1-8 [ABL1_4yc8_ch...] 0</title>-</text>
+<text x="1510" y="358" style="dominant-baseline:central;"><title>A1-45 [ABL1_2v7a_ch...] 0.1</title>I</text>
+<text x="326" y="326" style="dominant-baseline:central;"><title>A1-8 [ABL1_2hz4_ch...] 0</title>-</text>
+</g>
+</g>
+</g>
+</g>
+</svg>

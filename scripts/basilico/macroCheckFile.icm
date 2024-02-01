@@ -1,0 +1,11 @@
+# depends on die macro
+macro checkFile s_file s_fileLabel ("") auto
+  l_commands = no
+  if (!Exist(s_file) ) then
+    if (s_fileLabel != "") then
+      smsg = s_fileLabel + " "
+    endif # s_fileLabel
+    smsg += "file not found: " + s_file
+    die smsg
+  endif # s_file
+endmacro # checkFile

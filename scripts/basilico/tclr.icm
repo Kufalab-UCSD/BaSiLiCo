@@ -1,0 +1,30 @@
+#!/pro/icm/icms/icm64 -p/pro/icm/icms/
+l_commands = no
+l_info = l_commands
+
+ftclr = "data/bascilico/tclr.icb"
+
+# visualization of ligand cluster table
+# get system colors in #RRGGBB format
+show color output="s_out"
+S = Trim(Split(s_out "\n") all)
+# remove header
+if (Nof(S) > 2) then ; S = S[3:$] ; endif
+group table tclr Field(S 2) "name" Field(S 3) "clr"
+
+# black/grey/white
+sclr = "black,dimgray,darkgray,darkslategray,slategray,grey,silver,gray,ghostwhite,white"
+# very light colors
+sclr += ",lightslategray,azure,seashell"
+# atom types
+sclr += ",blue,brown,chartreuse,darkgrey,darkkhaki,darkseagreen,darkslategray,gold,lightblue,lightcyan,lightyellow,orange,purple,red,steelblue,yellow"
+Sclr = Split(sclr ",")
+
+delete tclr.name == Sclr
+set format tclr.clr color="clr"
+
+write binary tclr ftclr delete
+
+l_info = yes
+quit
+

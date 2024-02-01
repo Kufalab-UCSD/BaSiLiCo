@@ -1,0 +1,15 @@
+# merges covalently bonded molecules into one molecule
+macro mergeCovalent ms_
+  l_commands = no
+  l_info = l_commands
+  if (Nof(Mol(ms_) ) < 2) then ; return ; endif
+  set field name="tmpmerge" Mol(ms_)
+  while (Nof(Select(Mol(a_*.) "tmpmerge") ) > 1)
+    # make molecules adjacent
+    move Select(Mol(a_*.) "tmpmerge")[2] Select(Mol(a_*.) "tmpmerge")[1]
+    # merge molecules into one
+    move Select(Mol(a_*.) "tmpmerge")[2] | Select(Mol(a_*.) "tmpmerge")[1]
+  endwhile
+  delete field name="tmpmerge" Mol(a_*.)
+endmacro # mergeCovalent
+

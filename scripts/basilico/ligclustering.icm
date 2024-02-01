@@ -1,0 +1,128 @@
+#!/pro/icm/icms/icmng64 -W/pro/icm/icms/
+
+l_commands = no
+l_info = l_commands
+
+ifile = Getarg("if" "s_")
+ofile = Getarg("of" "s_")
+# flag: ensemble mode by default, object mode if option ob is present
+l_objectMode = Getarg("ob" find)
+
+l_showResCodeInSelection = no
+
+# macro die s_ l_notAnError
+f = "scripts/basilico/macroDieWeb.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroDieWeb.icm"
+  if (!Exist(f) ) then
+    print "macroDieWeb.icm not found"
+    quit 1
+  endif # f
+endif # f
+call f
+
+# macro checkFile s_file s_fileLabel
+f = "scripts/basilico/macroCheckFile.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroCheckFile.icm"
+  if (!Exist(f) ) then ; die "macroCheckFile.icm not found" ; endif
+endif # f
+call f
+
+# rsNmsListVect rs_ i_aggregationLevel
+# <dep> <output> S_lst :: list of short residue names
+f =  "scripts/src/macroRsNms.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroRsNms.icm"
+  if (!Exist(f) ) then ; die "macroRsNms.icm not found" ; endif
+endif # f
+call f
+
+# mergeCovalent ms_
+f = "scripts/src/macroMergeCovalent.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroMergeCovalent.icm"
+  if (!Exist(f) ) then ; die "macroMergeCovalent.icm not found" ; endif
+endif # f
+call f
+
+# moveLigands1
+# makeLigandTable
+# chemicalClustering
+# distanceClustering
+# countLigands
+f = "scripts/src/macroLigandClustering.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroLigandClustering.icm"
+  if (!Exist(f) ) then ; die "macroLigandClustering.icm not found" ; endif
+endif # f
+call f
+
+checkFile ifile "input"
+read binary object only ifile
+if (Nof(a_ICM.) > 0) then ; strip a_ICM. ; endif
+delete a_*.//h*,vt*
+
+# select ligands
+lig = Select(a_*./ "ligand")
+prot = Mol(Select(a_*./ "psite") )
+relevantLigandCutoff = 5.
+delete field name="r" Select(a_*.// "r")
+set field name="r" Sphere(prot lig relevantLigandCutoff)
+delete prot
+delete a_*. & !lig
+
+# transform several ligand molecules with the same mol index into 1 molecule
+print "merging ligand molecules..."
+imolMax = Max(Field(lig "ligand") )
+for imol = 1, imolMax
+  mergeCovalent Mol(Select(lig "ligand==" + String(imol) ) )
+  set field name="ligand" Mol(Select(lig "ligand==" + String(imol) ) ) imol
+endfor # imol
+
+if (l_objectMode) then
+  group table tlig Chemical(a_*.*) "mol" Name(a_*.* object) "obNm" Name(a_*.* molecule) "molNm" Field(a_*.* "ligand") "lig"
+  rsNmsListVect a_*.* 2 # S_lst
+  add column tlig S_lst name="rsNm" index=4
+  add column tlig 0 name="ccl"
+  add column tlig 0 name="dcl"
+  add column tlig 1 name="cnt"
+  t = tlig
+  add column t Count(Nof(t) ) name="i"
+  group t.obNm t.i "min"
+  sort t.i
+  t.i = Count(Nof(t) )
+  join left tlig.obNm t.obNm name="tlig"
+  delete t
+  rename tlig.i "ligcl"
+else
+  # move all ligands into 1 object
+  print "moving ligand molecules..."
+  moveLigands1
+  # a_lig. is the only object
+
+  # ligand table
+  makeLigandTable # tlig
+
+  # chemical clustering
+  print "chemical clustering..."
+  chemicalClustering # T_out
+  tlig = T_out
+
+  # distance clustering
+  print "distance clustering..."
+  delete T_out
+  distanceClustering # T_out
+  tlig = T_out
+
+  # count ligands in ligand cluster
+  delete T_out
+  countLigands # T_out
+  tlig = T_out
+endif # l_objectMode
+
+write binary tlig ofile delete
+
+l_info = yes # get session info
+quit
+

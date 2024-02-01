@@ -1,0 +1,1183 @@
+#!/pro/icm/icms/icmng64 -w/pro/icm/icms/
+
+# needs license for `make tree`
+
+l_commands = no
+l_info = l_commands
+
+# integrated invocation within Pocketome
+id = Getarg("id", "s_")
+# if not provided -> external invocation with tlig option
+l_external = (id == "s_")
+
+# object mode: no flexibility
+l_objectMode = Getarg("ob" find)
+
+# ligand table (optional)
+ftlig = Getarg("tlig", "s_")
+
+fconfig = "config"
+fSafeOffset = "scripts/src/funcSafeOffset.icm"
+fdie = "scripts/basilico/macroDieWeb.icm"
+fcheckFile = "scripts/basilico/macroCheckFile.icm"
+fcolorColor = "scripts/basilico/macroColorColor.icm"
+ftclr = "data/basilico/tclr.icb"
+finfo = "data/basilico/info.html"
+
+macroDir = "basilico/"
+if (l_external) then
+  fconfig = ""
+  if (!Exist(fdie) ) then
+    fdie = macroDir + "macroDieWeb.icm"
+    if (!Exist(fdie) ) then
+      print "macroDieWeb.icm not found"
+      quit 1
+    endif # fdie
+  endif # fdie
+endif # l_external
+
+call fdie
+
+if (l_external) then
+  if (!Exist(fSafeOffset) ) then
+    fSafeOffset = macroDir + "funcSafeOffset.icm"
+    if (!Exist(fSafeOffset) ) then ; die "funcSafeOffset.icm not found" ; endif
+  endif # fSafeOffset
+  if (!Exist(fcheckFile) ) then
+    fcheckFile = macroDir + "macroCheckFile.icm"
+    if (!Exist(fcheckFile) ) then ; die "macroCheckFile.icm not found" ; endif
+  endif # fcheckFile
+  if (!Exist(fcolorColor) ) then
+    fcolorColor = macroDir + "macroColorColor.icm"
+    if (!Exist(fcolorColor) ) then ; die "macroColorColor.icm not found" ; endif
+  endif # fcolorColor
+  if (!Exist(ftclr) ) then
+    ftclr = macroDir + "tclr.icb"
+    if (!Exist(ftclr) ) then ; die "tclr.icb not found" ; endif
+  endif # ftclr
+  if (!Exist(finfo) ) then
+    finfo = macroDir + "info.html"
+    if (!Exist(finfo) ) then ; die "info.html not found" ; endif
+  endif # finfo
+  fobj  = Getarg("if", "s_")
+  fout  = Getarg("of", "s_")
+endif # l_external
+delete macroDir
+
+# if yes, do not calculate flexibility of the binding site residues
+# and do not reduce contact strengths
+l_ignoreFlex = no
+if (l_objectMode) then ; l_ignoreFlex = yes ; endif
+delete l_objectMode
+
+call fconfig
+if (!l_external) then
+  # id is provided, tlig is not
+  if (ftlig == "s_") then ; ftlig = s_SFROOT + "pic/" + id + "_pic.icb" ; endif
+  fobj  = s_SFROOT + "icb/" + id + ".icb"
+  f = s_SFROOT + "cont/" + id + "_stre.icb"
+  fout  = Getarg("of", f)
+endif # l_external
+
+### done with options ##########################################################
+
+# macro die s_message l_notAnError
+call fdie
+
+# macro checkFile s_file s_fileLabel
+call fcheckFile
+
+# check input files
+checkFile ftlig "tlig"
+checkFile ftclr "tclr"
+checkFile fobj "obj"
+
+# function SafeOffset
+call fSafeOffset
+
+# macro colorColor R_ s_gradient r_min r_max
+call fcolorColor
+read string fcolorColor name="scolorColor"
+
+l_showResCodeInSelection = no
+
+# set tag gr with values B/C/P on specified atom selection
+macro markGroups as_
+  l_commands = no
+  l_info = l_commands
+  asel = Atom(as_) & a_*.A/A/!vt*,h*
+  # polar: non-carbons
+  set field name="gr" asel & a_*.//!c* "P"
+  # add non-carbon atoms to carbon nonpolar group
+  # nonpolar Sd atom of Met
+  set field name="gr" asel & a_*.//c*,sd "C"
+  # Cys within disulfides
+  set field name="gr" asel & a_*./cyss/ "C"
+  # move some carbons back to polar
+  # join multiple N/O atoms to a single polar group
+  set field name="gr" asel & a_*./arg/cz "P"
+  set field name="gr" asel & a_*./asn,asp/cg "P"
+  set field name="gr" asel & a_*./gln,glu/cd "P"
+  set field name="gr" asel & a_*./his/ce1 "P"
+  # Ce atom of Lys is correlated with terminal N atom
+  set field name="gr" asel & a_*./lys/ce "P"
+  # single polar group for small side chains of Cys and Ser
+  # consistent treatment of Thr inferred from Ser
+  set field name="gr" asel & a_*./cys,ser,thr/cb "P"
+  # backbone group
+  set field name="gr" asel & a_*.//c,ca,o,n "B"
+endmacro # markGroups
+
+# values from GPCRDOCK2010 contact calculations
+r_margin = 1.4 ; r_dist = 4. ; r_gRatio = 0.49 + 0.17 * r_margin / r_dist
+r_dLo = r_dist - r_gRatio * r_margin; r_dHi = r_dist + (1 - r_gRatio) * r_margin
+# define strength of "strong" contact:
+# a group with single contact with default distance r_dist, averaged with Sqrt
+r_streCutoff = Sqrt( (r_dHi - r_dist) / r_margin)
+# cap contact strength at 3. -- most pi-stacking interactions are overweigthed otherwise,
+# 95-98% of all contacts are below this cutoff
+r_streMax = 3.
+# noise level
+r_streMin = 0.1
+group table tdef 0.01 * Count(Integer(Ceil(r_dHi) ) * 100) "d"
+add column tdef Trim( (r_dHi - tdef.d) / r_margin, 0., 1.) name="stre"
+set format tdef.d "%.2f"
+set format tdef.stre "%.3f" color="rainbow='white/green,0:1'"
+make plot tdef "x=d;y=stre;color=stre;rainbow=grey/green;"
+add header tdef r_margin name="r_margin"
+add header tdef r_dist name="r_dist"
+add header tdef r_gRatio name="r_gRatio"
+add header tdef r_dLo name="r_dLo"
+add header tdef r_dHi name="r_dHi"
+add header tdef r_streMin name="r_streMin"
+add header tdef r_streCutoff name="r_streCutoff"
+add header tdef r_streMax name="r_streMax"
+delete r_margin r_dist r_gRatio r_dLo r_dHi r_streCutoff r_streMax r_streMin
+smacro = """
+macro dsStre s_sel s_ligcl r_stre s_label ("") auto
+  l_commands = no
+  l_info = l_commands
+  GRAPHICS.l_redraw = no
+  GRAPHICS.xstickStyle = "chemplusaroma"
+  resNum = Field(s_sel 1 "/")
+  stype = Field(s_sel 2 "/")
+  GRAPHICS.NtoCRainbow = "white/blue"
+  if (stype == "B") then ; GRAPHICS.NtoCRainbow = "white/orange" ; endif
+  if (stype == "C") then ; GRAPHICS.NtoCRainbow = "white/grey" ; endif
+  if (stype == "P") then ; GRAPHICS.NtoCRainbow = "white/cyan" ; endif
+  if (stype == "S") then
+    GRAPHICS.NtoCRainbow = "white/magenta"
+    stype = "C|P"
+  endif # S
+  if (stype == "T") then
+    GRAPHICS.NtoCRainbow = "white/green"
+    stype = "B|C|P"
+  endif # T
+  Sligcl = Sarray()
+  if (s_ligcl ~ "B*" | s_ligcl ~ "S*" | s_ligcl ~ "T*") then
+    Sligcl = Split( (tcont.split == s_ligcl & tcont.sel == s_sel).ligcl[1] ",")
+  else
+    Sligcl = Split(s_ligcl ",")
+  endif # s_ligcl
+  Sligcl = Unique(Sligcl sort)
+  as_out = !a_*.
+  for i = 1, Nof(Sligcl)
+    as_out = as_out | Select(a_*./ "ligcl==" + Sligcl[i])
+  endfor # i
+  display as_out xstick
+  set xstick Atom(as_out) 0.2
+  color Atom(as_out)
+  undisplay !as_out
+  as2_out = Select(a_*.A/$resNum "psite") & Obj(as_out)
+  display as2_out xstick
+  set xstick Atom(as2_out) 0.03
+  color a_*.//c* & Select(Atom(as2_out) "gr~" + "B") orange
+  color a_*.//c* & Select(Atom(as2_out) "gr~" + "C") grey
+  color a_*.//c* & Select(Atom(as2_out) "gr~" + "P") cyan
+  as2_out = Select(Atom(as2_out) "gr~" + stype)
+  set xstick Atom(as2_out) 0.2
+  if (Type(dcont) != "unknown") then ; delete dcont ; endif
+  if (r_stre > 0.) then
+    for i = 1, Nof(Obj(as_out) )
+      osel = (Obj(as_out) )[i]
+      if (Nof(as2_out & osel) == 0) then ; continue ; endif # next object
+      make distance as2_out & osel as_out & osel tdef.r_dHi name="dcont" append
+    endfor # i
+    display dcont wire
+    undisplay dcont dot number
+    tdcont = Table(dcont distance)
+    add column tdcont Trim( (tdef.r_dHi - tdcont.dist) / tdef.r_margin, 0., 1.) name="stre"
+    colorColor tdcont.stre GRAPHICS.NtoCRainbow 0. 1. # S_out
+    add column tdcont S_out name="clr"
+    for i = 1, Nof(tdcont)
+      select dcont Atom(dcont i)
+      color dcont selection rgb=tdcont.clr[i]
+    endfor # i
+    keep dcont
+  endif # r_stre
+  delete label
+  s = ""
+  if (s_label == "") then
+    sligcl = s_ligcl
+    if (Length(sligcl) > 32) then ; sligcl = sligcl[1:29] + "..." ; endif
+    s = s_sel + " [" + sligcl + "] : "
+    s1 = String(r_stre)
+    if (Length(s1) <= 3) then
+      s = s + s1
+    else
+      sprintf "%.1f" r_stre name="s" append
+    endif # s1
+  else
+    s = s_label
+  endif # s_label
+  display string s
+  color !a_*. 0. // 0. // 1. # displays color bar
+  GRAPHICS.rainbowBarStyle = "right"
+  GRAPHICS.l_redraw = yes
+  display new
+  display new # required for rings in HETs
+endmacro # dsStre
+"""
+smacro = smacro + "\n" + scolorColor
+add header tdef smacro name="dsStre"
+
+# real groups
+Sgr = {"B", "C", "P"}
+Sgrclr = {"orange", "grey", "cyan"}
+# aggregated
+Sgra = {"S", "T"}
+Sgraclr = {"magenta", "green"}
+RstreClrMax = 2. * {1., 1., 1., 1., 2.}
+
+# ligand clustering by chemical similarity and space overlap
+# in object mode ligcl is unique for the object
+read binary ftlig only name={"tlig"}
+# tlig: mol molNm rsNm lig ccl dcl cnt ligcl
+
+# visualization of ligand cluster table
+read binary ftclr only name={"tclr"} # tclr: clr name
+delete tclr.name
+n = Nof(tlig)
+while (Nof(tclr) < n)
+  add tclr tclr # repeat the colors
+endwhile
+add column tclr Count(Nof(tclr) ) name="i"
+join left tlig.ligcl tclr.i name="tlig"
+delete tclr
+set format tlig.ligcl color="clr"
+set format tlig.clr show off # hide
+cclmax = Max(tlig.ccl)
+if (cclmax > 0) then
+ set format tlig.ccl color="rainbow='white/pink/white,0.:" + String(cclmax) + ",linear/0.:0./1.e-6:0.5/1.:0.8'"
+endif # cclmax
+dclmax = Max(tlig.dcl)
+if (dclmax > 0) then
+ set format tlig.dcl color="rainbow='white/skyblue/white,0.:" + String(dclmax) + ",linear/0.:0./1.e-6:0.5/1.:0.8'"
+endif # dclmax
+smacro = """
+macro toggleDsLig s_table i_cl s_clr
+  l_info = no
+  GRAPHICS.l_redraw = no
+  set xstick 0.1
+  as_out = Select(a_*./ "ligcl==" + String(i_cl) ) & a_*.//!vt*,h*
+  if (Nof(as_out & a_*.//DX) == 0) then
+    display as_out xstick
+    color xstick as_out & a_*.//c* $s_clr
+    if (Nof(as_out & a_*.M) == Nof(as_out) ) then
+      color xstick as_out $s_clr
+    endif # a_*.M
+    iL = -1
+  else
+    undisplay as_out xstick
+    iL = 0
+  endif # as_out is displayed
+  if (Type($s_table.L) == "iarray") then
+    ii = Index($s_table.ligcl == i_cl)
+    IL = $s_table.L
+    IL[ii] = iL
+    $s_table.L = IL
+  endif # L
+  GRAPHICS.l_redraw = yes
+  display new
+  display new # required for rings in HETs
+endmacro # toggleDsLig
+"""
+# set property command on smacro
+add header tlig smacro name="toggleDsLig"
+s = "if (Type(toggleDsLig) != \"macro\") call string %@.toggleDsLig ; toggleDsLig \"%@\" %ligcl \"%clr\" "
+set property display tlig s s # adds column L
+# redefine actions
+add header tlig s name="cursor"
+add header tlig s name="lockAction"
+delete tlig.O
+
+# read binary file with objects
+# sequence is optional and is used for ensemble residue codes
+read binary object sequence only fobj
+if (Nof(a_ICM.) > 0) then ; strip a_ICM. ; endif
+delete a_*.//h*,vt*
+
+# ligcl tag
+for i = 1, Nof(tlig)
+  ilig = tlig.lig[i]
+  iligcl = tlig.ligcl[i]
+  set field name="ligcl" Select(a_*./ "ligand==" + String(ilig) ) iligcl
+endfor # i
+
+# remove non-relevant residues
+psite = Select(a_*./ "psite")
+delete a_*. & !Obj(psite)
+lig = Select(a_*./ "ligcl")
+delete a_*. & !Obj(lig)
+other = Res(Next(Atom(psite) & !a_*./c,n,o,ca bond) ) & !psite & !lig
+delete !(Mol(psite) | lig | other)
+
+# objects and ligand clusters
+rsel = Select(a_*./ "ligcl")
+group table tob Name(rsel object) "obNm" Field(rsel "ligand") "lig" Field(rsel "ligcl") "ligcl"
+n = Nof(tob)
+add column tob Count(n) name="i"
+add column tob tob.obNm + Sarray(n "@") + tob.ligcl name="sig"
+group tob.sig tob.obNm "first" tob.ligcl "first" tob.lig "uniq" tob.i "first"
+delete tob.sig
+# preserve original object order
+sort tob.i
+delete tob.i
+ligclmax = Max(tob.ligcl)
+
+# renumber binding site residues so that they are unique and independent of the chain
+# keep original residue numbers in tres table and "num" residue field
+# merge all psite molecules into one
+recComp = Unique(Field(Select(a_*./ "psite") "psite") sort)
+
+offsetStep = SafeOffset()
+numOffsets = offsetStep * (Count(Nof(recComp) ) - 1)
+for o = 1, Nof(a_*.)
+  set object a_$o.
+  msel1 = !a_*.
+  # renumber residues
+  for i = 1, Nof(recComp)
+    sch = recComp[i]
+    msel = Mol(Select(a_/ "psite==" + sch) )
+    rsel = Res(msel)
+    if (Nof(msel) == 0) then ; continue ; endif # next chain
+    if (Nof(msel) > 1) then ; delete msel & !( (msel)[1] ) ; endif
+    group table t Name(rsel object) "obNm" Field(rsel "psite") "psite" Field(Sarray(rsel residue) 2 "/") "original" Split(Tr321(Sum(Sarray(Name(rsel residue) 1 3) " ") ) "") "res"
+    add column t Iarray(t.original) + numOffsets[i] name="i"
+    add column t Replace(t.original "-?[0-9]+" "" regexp) name="ins"
+    add column t Sarray(t.i) + t.ins name="resNum"
+    delete t.i
+    set field name="num" rsel t.original
+    align number rsel t.resNum
+    add column t sch name="ch"
+    sswiss = Name(msel swiss)[1]
+    swissLen = 0
+    if (Type($sswiss) != "sequence") then
+      sswiss = ""
+    else
+      swissLen = Length($sswiss)
+    endif # sswiss
+    add column t sswiss name="swiss"
+    add column t swissLen name="swissLen"
+    add tres t
+    delete t
+    # make psite molecules adjacent
+    if (i > 1) then ; move msel msel1 ; endif
+    msel1 = msel[1]
+  endfor # i
+  # merge molecules
+  msel = Mol(Select(a_/ "psite") )
+  if (Nof(msel) > 1) then
+    obNm = Name(a_)[1]
+    if (Length(obNm) > 4) then
+      ch = obNm[5:$]
+    else
+      ch = "a"
+    endif # obNm
+    move msel
+    msel = Mol(Select(a_/ "psite") )
+    if (Name(msel molecule)[1] != ch) then
+      ch = Name(ch a_ unique)
+      rename msel ch
+    endif # name
+  endif # msel
+endfor # o
+tmut = tres
+# remove non-binding site residues from the table
+# initially these residues are required in the table for proper numbering
+delete tres.psite == ""
+delete tres.psite tres.res tres.obNm
+add column tres tres.ch + Sarray(Nof(tres) "@") + tres.original name="sig"
+group tres.sig all "first"
+delete tres.sig
+# second sort of resNum to make proper order of insertion codes
+sort number tres.resNum tres.resNum
+# determine residue code by frequency in all objects (unweighted)
+add column tres "." name="res"
+add column tres Iarray(tres.original) name="i"
+add column tres tres.i - tres.swissLen name="overSwiss"
+delete tres.swissLen
+ii = Index(tres.i >= 1 & tres.ins == "" & tres.overSwiss <= 0)
+delete tres.overSwiss tres.ins
+for i = 1, Nof(ii)
+  j = ii[i]
+  k = tres.i[j]
+  sswiss = tres.swiss[j]
+  tres.res[j] = $sswiss[k]
+endfor # i
+delete tres.i
+psite = Select(a_*./ "psite")
+# if no residue code found, use most frequent residue
+ii = Index(tres.res == ".")
+if (Nof(ii) > 0) then
+  t = tmut
+  add column t 1 name="cnt"
+  add column t t.resNum + Sarray(Nof(t) "@") + t.res name="sig"
+  group t.sig t.resNum "first" t.res "first" t.cnt "sum"
+  group t.resNum t.cnt "max" t.res "refmax,resnew"
+  delete t.cnt
+  join left tres.resNum t.resNum name="tres"
+  delete t
+  tres.res[ii] = tres.resnew[ii]
+  delete tres.resnew
+endif # ii
+
+# fill in mutations table
+# add ligcl to tmut
+t = tob
+group t.obNm t.ligcl "uniq"
+join left tmut.obNm t.obNm name="tmut"
+delete t
+split tmut.ligcl separator=","
+# unique residue codes for each ligcl @ ch @ residue number
+t = tmut
+tmut2 = tmut
+delete tmut
+S = Sarray(Nof(t) "@")
+add column t Sarray(t.ligcl) + S + t.ch + S + t.original + S + t.res name="sig"
+add column t 1 name="cnt"
+group t.sig t.ligcl "first" t.ch "first" t.original "first" t.res "first" t.cnt "sum"
+S = Sarray(Nof(t) "@")
+t.sig = Sarray(t.ligcl) + S + t.ch + S + t.original
+group t.sig t.ligcl "first" t.ch "first" t.original "first" t.cnt "max" t.res "refmax"
+delete t.cnt
+# rectangular table for each ligcl @ ch @ residue number
+S = Sarray(Nof(t) "@")
+t.sig = t.ch + S + t.original
+sligcl = Sum(Sarray(Count(Max(tob.ligcl) ) ) ",")
+ssig = Sum(Unique(t.sig sort) ",")
+group table tmut Sarray(1 sligcl) "ligcl" Sarray(1 ssig) "sig"
+split tmut.ligcl separator=","
+split tmut.sig separator=","
+# fill rectangular table
+S = Sarray(Nof(t) "@")
+t.sig = Sarray(t.ligcl) + S + t.ch + S + t.original
+delete t.ligcl t.original t.ch
+S = Sarray(Nof(tmut) "@")
+tmut.sig = Sarray(tmut.ligcl) + S + tmut.sig
+join left tmut.sig t.sig name="tmut"
+delete t
+# deletions
+tmut.res[Index(tmut.res == "")] = "-"
+# add chain and residue numbers back
+add column tmut Field(tmut.sig 2 "@") name="ch" index=2
+add column tmut Field(tmut.sig 3 "@") name="original" index=3
+S = Sarray(Nof(tmut) "@")
+tmut.sig = tmut.ch + S + tmut.original
+# add sequence info
+group table t tres.ch "ch" tres.swiss "swiss"
+group t.ch all "first"
+for i = 1, Nof(t)
+  sch = t.ch[i]
+  sseqNm = t.swiss[i]
+  if (Type($sseqNm) == "sequence") then
+    n = Length($sseqNm)
+    sseq = String($sseqNm)
+    group table tmp Count(n) "resNum" Split(sseq "") "swiss" Sarray(n sch) "ch"
+  else
+    tmp = tmut2.ch == sch
+    add column tmp Sarray(tmp.original) + Sarray(Nof(tmp) "@") + tmp.res name="sig"
+    add column tmp 1 name="cnt"
+    group tmp.sig tmp.original "first" tmp.res "first" tmp.cnt "sum"
+    group tmp.original tmp.cnt "max" tmp.res "refmax,swiss"
+    delete tmp.cnt
+    rename tmp.original "resNum"
+    add column tmp sch name="ch"
+    sort number tmp.resNum tmp.resNum
+    sseq = Sum(tmp.swiss "")
+  endif # sseqNm
+  add t2 tmp
+  delete tmp
+  s = "seq" + sch
+  add tmut header sseq name=s
+endfor # i
+delete t tmut2
+S = Sarray(Nof(t2) "@")
+add column t2 t2.ch + S + t2.resNum name="sig"
+delete t2.ch t2.resNum
+join left tmut.sig t2.sig name="tmut"
+delete t2
+# keep mutations only
+add column tmut 0 name="mut"
+for i = 1, Nof(tmut)
+  if (tmut.res[i] != tmut.swiss[i]) then ; tmut.mut[i] = 1 ; endif
+endfor # i
+delete tmut.mut == 0
+delete tmut.mut tmut.sig
+sort tmut.ligcl tmut.ch number tmut.original tmut.original
+
+# clean up molecular objects
+delete !(psite | lig | other)
+
+# analyze residue flexibility
+r_rmsdCutoff = 5.
+nob = Nof(a_*.)
+group table tflex Unique(Field(Sarray(psite residue), 2, "/") sort) "resNum"
+# 1. means non-flexible residue, 0. -- completely flexible
+add column tflex 0. name="nonflex"
+add column tflex 0. name="nonflexbb"
+nflex = Nof(tflex)
+if (l_ignoreFlex) then
+  tflex.nonflex = Rarray(nflex 1.)
+  tflex.nonflexbb = Rarray(nflex 1.)
+else
+  for j = 1, nflex
+    for k = 1, 2 # 1 is total, 2 is backbone
+      str = tflex.resNum[j]
+      # calculate srmsd for particular position
+      asel = psite & a_*.A/$str
+      if (k == 2) then ; asel = asel & a_*.//c,ca,n,o ; endif
+      if (Nof(asel) > 0) then
+        group table tmp Rarray(Srmsd(asel asel matrix) ) "rmsd"
+        sort tmp.rmsd
+        add column tmp Rarray(Count(Nof(tmp) ) ) / (nob * nob) name="frac_pairs" # fraction of pairs, max is 1
+        delete tmp.rmsd >= r_rmsdCutoff # shouldn't be empty due to self zeros
+        max_frac = tmp.frac_pairs[Nof(tmp)]
+        add tmp ; tmp.rmsd[Nof(tmp)] = r_rmsdCutoff ; tmp.frac_pairs[Nof(tmp)] = max_frac
+        add column tmp (tmp.rmsd[2:Nof(tmp)] // r_rmsdCutoff) - tmp.rmsd name="drmsd"
+        # flexibility is normalized AUC frac_pairs vs rmsd
+        nonflex = Sum(tmp.drmsd * tmp.frac_pairs ) / r_rmsdCutoff
+      else
+        nonflex = 0.
+      endif # asel
+      if (k == 1) then
+        tflex.nonflex[j] = nonflex
+      else
+        tflex.nonflexbb[j] = nonflex
+      endif # k
+    endfor # k
+  endfor # j
+  delete tmp
+endif # l_ignoreFlex
+# second sort of resNum to make proper order of insertion codes
+sort number tflex.resNum tflex.resNum
+s = "s = %@.resNum[%#] ; display xstick Select(a_*.A/* \"psite\") & a_*.A/$s only"
+add header tflex s name="cursor"
+add column tflex tflex.nonflexbb - tflex.nonflex name="dbb"
+set format tflex.nonflex "%.3f" color="rainbow='red/white/skyblue,0:1'"
+set format tflex.nonflexbb "%.3f" color="rainbow='red/white/skyblue,0:1'"
+set format tflex.dbb "%.3f" color="rainbow='white/yellow,0:1'"
+# tflex.nonflex ranges from 0 to 1; lower number indicates higher flexibility
+
+
+# calculate contacts
+l_showResCodeInSelection = no
+# split residues into groups
+markGroups psite
+for j = 1, Nof(tob) # object@ligcl
+  
+  # select psite and ligands
+  sob = tob.obNm[j]
+  sob
+  set object a_$sob.
+  iligcl = tob.ligcl[j]
+  asel = Atom(psite & a_)
+  env = Sphere(asel, Select(a_/* "ligcl==" + String(iligcl) ), tdef.r_dHi)
+
+  # sum up relative distances between psite and ligand atoms per psite atom
+  if ( (Nof(asel) == 0) | (Nof(env) == 0) ) then ; continue ; endif # next object-lig pair
+  d = Distance(Xyz(asel), Xyz(env) )
+  d = Trim( (tdef.r_dHi - d) / tdef.r_margin, 0., 1.)
+  delete env
+  
+  # combine strength and atom selection
+  group table t Sarray(asel) "sel" Sum(Transpose(d) ) "stre" Field(asel "gr") "gr"
+  # residue codes
+  add column t Split(Tr321(Sum(Sarray(Name(asel residue) 1 3) " ") ) "") name="res" index=1
+  ii = Index(t.gr == "")
+  if (Nof(ii) > 0) then
+    print " Warning" + "> non-recognized groups detected"
+    t[ii]
+    delete t[ii]
+  endif # ii
+  # remove object and molecule name from t.sel, keep only residue number / group type
+  t.sel = Field(t.sel 2 "/") + Sarray(Nof(t) "/") + t.gr
+
+  # sum up individual atoms at group level
+  group t.sel t.res "first" t.stre "sum"
+  # side chains -- group S
+  tmp = t
+  delete tmp.sel ~ "*/B"
+  tmp.sel = Replace(tmp.sel {"/C", "/P"} Sarray(2 "/S") )
+  group tmp.sel tmp.res "first" tmp.stre "sum"
+  add t tmp
+  t.stre = Trim(Sqrt(t.stre) 0. tdef.r_streMax) # to reduce n*n contacts to n
+  # whole residue -- type T
+  # total stre = sum of B and S, without Sqrt -- spatially separated groups
+  tmp = t.sel ~ "*/B" | t.sel ~ "*/S"
+  tmp.sel = Replace(tmp.sel {"/B", "/S"} Sarray(2 "/T") )
+  group tmp.sel tmp.res "first" tmp.stre "sum"
+  add t tmp
+  delete tmp
+
+  # add ligand info
+  add column t iligcl name="ligcl" index=2
+
+  add tstre t
+  delete t
+endfor # j
+
+# add residue code with the best mean stre within ligcl
+add column tstre Field(tstre.sel 1 "/") name="resNum"
+add column tstre tstre.resNum + "@" + tstre.ligcl name="sig"
+t = tstre.sel ~ "*/T"
+add column t t.sig + Sarray(Nof(t) "@") + t.res name="sig2"
+group t.sig2 t.sig "first" t.res "first" t.stre "mean"
+group t.sig t.stre "max" t.res "refmax"
+delete t.stre
+delete tstre.res
+join left tstre.sig t.sig name="tstre"
+delete t
+move tstre.res 2
+delete tstre.sig
+
+# aggregate multiple occurrences of the ligands of the same cluster
+add column tstre tstre.sel + "@" + tstre.ligcl name="sig"
+group tstre.sig tstre.res "first" tstre.sel "first" tstre.ligcl "first" tstre.stre "mean"
+delete tstre.sig
+# tstre : res sel ligcl stre
+
+### correct contact strengths by residue flexibilities
+add column tstre Field(tstre.sel, 1, "/") name="resNum"
+add column tstre Field(tstre.sel 2 "/") name="type"
+join left tstre.resNum tflex.resNum name="tstre"
+r_nonflexCutoff = 0.8
+tstre.nonflex = Trim(tstre.nonflex, 0., r_nonflexCutoff) / r_nonflexCutoff
+tstre.nonflexbb = Trim(tstre.nonflexbb, 0., r_nonflexCutoff) / r_nonflexCutoff
+ii = Index(tstre.type == "B")
+if (Nof(ii) > 0) then
+  tstre.stre[ii] = tstre.stre[ii] * tstre.nonflexbb[ii]
+endif # ii
+ii = Index(tstre.type != "B")
+if (Nof(ii) > 0) then
+  tstre.stre[ii] = tstre.stre[ii] * tstre.nonflex[ii]
+endif # ii
+delete tstre.nonflex tstre.nonflexbb tstre.dbb
+
+# color tstre
+S = Sgr // Sgra
+Sclr = Sgrclr // Sgraclr
+add column tstre "" name="clr"
+for i = 1, Nof(S)
+  stype = S[i]
+  ii = Index(tstre.type == stype)
+  if (Nof(ii) > 0) then
+    sclr = Sclr[i]
+    rmax = RstreClrMax[i]
+    colorColor tstre.stre[ii] "white/" + sclr 0. rmax # S_out
+    tstre.clr[ii] = S_out
+  endif # ii
+endfor # i
+set format tstre.clr show off # hide
+set format tstre.stre "%.2f" color="clr"
+
+# second sort of resNum to make proper order of insertion codes
+sort number tstre.resNum tstre.resNum tstre.ligcl tstre.type
+add column tstre Count(tstre.resNum unique) name="rnum"
+add column tstre tstre.rnum name="rnum1"
+set format tstre.sel color="rnum1 % 2 == 0 ? '#ffffaa' : 'white'"
+set format tstre.rnum1 show off # hide
+delete tstre.resNum
+
+# action visualization
+s = "if (Type(dsStre) != \"macro\") call string tdef.dsStre ; dsStre \"%sel\" String(%ligcl) Real(%stre)"
+add header tstre s name="cursor"
+
+# add visualization of the contact strengths
+# renumber residues consecutive from 1 and multiply by 6, then add 1 for B, C, P, S, T
+S = Sgr // Sgra
+tstre.rnum = (Nof(S) + 1) * tstre.rnum
+add column tstre Iarray(Replace(tstre.type S Sarray(Count(Nof(S) ) ) ) ) name="type1"
+add column tstre tstre.rnum + tstre.type1 name="rnumt"
+delete tstre.rnum tstre.type1
+# with Sqrt the plot is too noisy, use stre directly
+# add column tstre Sqrt(tstre.stre) name="sz"
+splot = "x=rnumt;y=ligcl;color=clr;size=stre;shape=Circle;;"
+if (ligclmax == 1) then
+  make plot tstre splot + "yStep=1.;yRange=0.95:1.05;;"
+else
+  make plot tstre splot
+endif # ligclmax
+
+# set stre residue tag
+# format: ligcl:type:stre(;ligcl:type:stre)*
+# example: 1:B:1.1;1:C:0.2;1:P:2.2;1:S:2.2;1:T:3.3;2:P:1.1;2:S:1.1;2:T:1.1
+delete field name="stre" Select(a_*./ "stre")
+group table t tstre.sel "sel" tstre.stre "stre" tstre.ligcl "ligcl"
+delete t.stre < tdef.r_streMin
+t2 = tob
+t2.obNm = Sarray(Nof(t2) "@") + t2.obNm # to prevent conversion to I_
+group t2.ligcl
+join left t.ligcl t2.ligcl name="t"
+delete t2
+add column t Field(t.sel 2 "/") name="type"
+S = Sarray(Nof(t) ":")
+add column t Sarray(t.ligcl) + S + t.type + S + Sarray(Sarray(t.stre) 1 3) name="tag"
+split t.obNm separator=","
+t.obNm = Replace(t.obNm "@" "")
+add column t Field(t.sel 1 "/") name="resNum"
+add column t t.obNm + Sarray(Nof(t) "@" ) + t.resNum name="sig"
+group t.sig t.obNm "first" t.resNum "first" t.tag "uniq" separator=";"
+delete t.sig
+for i = 1, Nof(t)
+  obNm = t.obNm[i]
+  resNum = t.resNum[i]
+  rsel = psite & a_$obNm./$resNum
+  stag = t.tag[i]
+  set field name="stre" rsel stag
+endfor # i
+delete t
+
+# CDF for contact strength
+for i = 1, Nof(Sgr)
+  sgr = Sgr[i]
+  tmp = tstre.type == sgr & tstre.stre > 0.
+  h = Histogram(tmp.stre 0. tdef.r_streMax 0.01)
+  group table tmp1 Count(Nof(h) ) "i" h[?, 1] "stre" h[?, 2] "cnt"
+  # normalize only if there are contacts
+  if (Nof(tmp) > 0) then ; tmp1.cnt = tmp1.cnt / Sum(tmp1.cnt) ; endif
+  add column tmp1 0. name="cdf"
+  tmp1.cdf[1] = tmp1.cnt[1]
+  for j = 2, Nof(tmp1)
+    tmp1.cdf[j] = tmp1.cdf[j - 1] + tmp1.cnt[j]
+  endfor # j
+  scol = "freq" + sgr
+  rename tmp1.cnt scol
+  scol = "cdf" + sgr
+  rename tmp1.cdf scol
+  if (i == 1) then
+    tcdf = tmp1
+  else
+    delete tmp1.stre
+    join left tcdf.i tmp1.i name="tcdf"
+  endif # i
+  delete tmp tmp1
+endfor # i
+delete tcdf.i
+make plot tcdf "x=stre;y=cdfB;color=orange;style=connected;;x=stre;y=cdfC;color=grey;style=connected;;x=stre;y=cdfP;color=cyan;style=connected;;title=stre-cdf;yTitle=cdf;;"
+set format tcdf.freqB "%.3f"
+set format tcdf.cdfB "%.3f" color="rainbow='white/orange,0:1'"
+set format tcdf.freqC "%.3f"
+set format tcdf.cdfC "%.3f" color="rainbow='white/grey,0:1'"
+set format tcdf.freqP "%.3f"
+set format tcdf.cdfP "%.3f" color="rainbow='white/cyan,0:1'"
+
+# build a table of residue-level contact fingerprints
+# table tfp: sel resNum (stre for each ligand cluster)
+group table tfp tstre.sel "sel"
+group tfp.sel
+add column tfp Field(tfp.sel 1 "/") name="resNum"
+add column tfp Field(tfp.sel 2 "/") name="type"
+# second sort of resNum to make proper order of insertion codes
+sort number tfp.resNum tfp.resNum tfp.sel
+add column tfp Count(tfp.resNum unique) name="rnum1"
+delete tfp.resNum
+set format tfp.sel color="rnum1 % 2 == 0 ? '#ffffaa' : 'white'"
+set format tfp.rnum1 show off # hide
+for i = 1, ligclmax
+  tmp = tstre.ligcl == i
+  group tmp.sel tmp.stre "first" tmp.clr "first" # rm extra columns
+  join left tfp.sel tmp.sel name="tfp"
+  delete tmp
+  tfp.stre[Index(tfp.stre == Toreal("ND") ) ] = 0.
+  tfp.clr [Index(tfp.clr  == ""           ) ] = "#ffffff"
+  scolstre =  "stre_" + String(i)
+  scolclr  =  "clr_"  + String(i)
+  rename tfp.stre scolstre
+  rename tfp.clr  scolclr
+  set format tfp.$scolstre "%.2f" color=scolclr
+  set format tfp.$scolclr show off # hide
+endfor # i
+s = "if (Type(dsStre) != \"macro\") call string tdef.dsStre ; if (\"%^\" ~ \"stre_*\") then ; dsStre \"%sel\" Field(\"%^\" 2 \"_\") %@.%^[%#] ; endif"
+add header tfp s name="cursor"
+add header tfp s name="doubleClick" # otherwise doesn't work without changing row
+
+# build a contact fingerprint-based ligand distance matrix
+# several kinds of groups: BCP, BS, S, T
+Ssplit = {"BCP", "BS", "S", "T"}
+for k = 1, Nof(Ssplit)
+  ssplit = Ssplit[k]
+  Stype = Split(ssplit "")
+  ii = Index(tfp.type == Stype)
+  M = Matrix(ligclmax ligclmax)
+  for i = 1, ligclmax
+    fnmi = "stre_" + String(i)
+    for j = i, ligclmax
+      fnmj = "stre_" + String(j)
+      # 1 - Sum(Min12) / Sum(Mean12)
+      norm = Sum( (tfp.$fnmi[ii] + tfp.$fnmj[ii]) / 2.)
+      if (norm == 0.) then
+        M[i, j] = 1. # treat ligand clusters without contacts as dissimilar
+      else
+        M[i, j] = 1. - Sum(Min(tfp.$fnmi[ii], tfp.$fnmj[ii]) ) / norm
+      endif # norm
+      M[j, i] = M[i, j]
+    endfor # j
+  endfor # i
+  rename M "M" + ssplit
+endfor # k
+
+# cluster ligands by contact fingerprints
+r_fpligCutoff = 0.35
+group table CL Count(ligclmax) "ligcl"
+# make trees using comparison matrices
+# add ord column in order to make names of autogenerated and linked ord columns consistent
+add column CL CL.ligcl name="ord"
+for i = 1, Nof(Ssplit)
+  ssplit = Ssplit[i]
+  smat = "M" + ssplit
+  add header CL $smat name=smat
+  scol = "fpcl" + ssplit
+  sname = "tree" + ssplit
+  make tree CL full "Complete" split=scol append name=sname distance=smat label="%ligcl"
+  scol = Name(CL.cluster i index)
+  # hide tree order
+  set format CL.$scol show off
+  split CL.cluster i r_fpligCutoff
+endfor # i
+delete CL.ord
+sort CL.ord_1
+
+# build cluster-averaged contact fingerprints and save list of residues with strong contacts
+group table CLa Iarray() "fpcl" Sarray() "split" Sarray() "ligcl" Iarray() "size" Iarray() "nofres" Sarray() "resNum"
+add column tfp 0. name="clAgg"
+for k = 1, Nof(Ssplit)
+  ssplit = Ssplit[k]
+  Stype = Split(ssplit "")
+  scol = "fpcl" + ssplit
+  add column CL CL.$scol name="fpcl"
+  for i = 1, Max(CL.fpcl)
+    # reset
+    tfp.clAgg[Count(Nof(tfp) ) ] = 0.
+    Iligcl = (CL.fpcl == i).ligcl
+    # add all ligand of the same fp-cluster
+    for j = 1, Nof(Iligcl)
+      fnm = "stre_" + Iligcl[j]
+      tfp.clAgg = tfp.clAgg + tfp.$fnm
+    endfor # j
+    # mean stre
+    ii = Index(CL.fpcl == i)
+    tfp.clAgg = tfp.clAgg / Nof(ii)
+    # groups with mean stre > cutoff
+    jj = Index(tfp.clAgg > tdef.r_streCutoff & tfp.type == Stype)
+    # groups -> residues
+    if (Nof(jj) > 0) then
+      S = Unique(Field(tfp.sel[jj] 1 "/") sort)
+      sort number S
+    else
+      S = Sarray()
+    endif # jj
+    add CLa # i_out
+    it = i_out
+    CLa.fpcl[it] = i
+    CLa.split[it] = ssplit
+    CLa.ligcl[it] = Sum(Sarray(Iligcl) ",")
+    CLa.size[it] = Nof(Iligcl)
+    CLa.resNum[it] = Sum(S ",")
+    CLa.nofres[it] = Nof(S)
+  endfor # i
+  delete CL.fpcl
+endfor # k
+delete tfp.clAgg
+
+# count residue in if it has at least one strong contact with the consensus ligands
+# frequency cutoff for consensus ligand
+r_freqCutoff = 0.8
+# most representative first
+sort CLa.split reverse CLa.size reverse CLa.nofres
+# determine ligand clusters that belong to the first fp-clusters that cover at least r_freqCutoff of ligand clusters
+add column CLa "" name="cons" index=6
+add column CLa CLa.size name="tot"
+ilast = Integer(Ceil(r_freqCutoff * ligclmax) )
+CLa.cons[1] = "X"
+for i = 2, Nof(CLa)
+  i1 = i - 1
+  if (CLa.split[i] == CLa.split[i1]) then
+    CLa.tot[i] = CLa.tot[i] + CLa.tot[i1]
+  else
+    CLa.cons[i] = "X" # first cluster always belongs to the consensus
+  endif # split
+  if (CLa.tot[i1] < ilast) then
+    CLa.cons[i] = "X"
+  endif # tot
+endfor # i
+delete CLa.tot
+
+smacro = """
+macro dsCL s_split s_ligcl s_resNum
+  l_commands = no
+  l_info = l_commands
+  GRAPHICS.l_redraw = no
+  GRAPHICS.xstickStyle = "chemplusaroma"
+  GRAPHICS.rainbowBarStyle = "no bar"
+  Iligcl = Iarray(Unique(Split(s_ligcl ",") sort) )
+  as_out = !a_*.
+  for i = 1, Nof(Iligcl)
+    as_out = as_out | Select(a_*./ "ligcl==" + String(Iligcl[i] ) )
+  endfor # i
+  display as_out xstick
+  set xstick Atom(as_out) 0.4
+  undisplay !as_out
+  delete label
+  if (Type(dcont) != "unknown") then ; delete dcont ; endif
+  SresNum = Unique(Split(s_resNum ",") sort)
+  as2_out = !a_*.
+  for i = 1, Nof(SresNum)
+    s = SresNum[i]
+    as2_out = as2_out | (Obj(as_out) & Select(a_*./$s "psite") )
+  endfor # i
+  display as2_out xstick
+  set xstick Atom(as2_out) 0.02
+  color xstick as_out | as2_out
+  l_showResCodeInSelection = no
+  group table tmp Name(as2_out object) "obNm" Field(Sarray(as2_out residue) 2 "/") "rnum" Field(as2_out "stre") "stretag"
+  split tmp.stretag separator=";"
+  delete tmp.stretag == ""
+  add column tmp Iarray(Field(tmp.stretag 1 ":") ) name="ligcl"
+  delete tmp.ligcl != Iligcl
+  add column tmp Field(tmp.stretag 2 ":") name="type"
+  add column tmp Rarray(Field(tmp.stretag 3 ":") ) name="stre"
+  if (s_split == "BCP") then
+    delete tmp.type != {"B", "C", "P"}
+    color Select(Atom(as2_out) "gr==B") & a_*.//c* orange
+    color Select(Atom(as2_out) "gr==C") & a_*.//c* grey
+    color Select(Atom(as2_out) "gr==P") & a_*.//c* cyan
+  endif # BCP
+  if (s_split == "BS") then
+    delete tmp.type != {"B", "S"}
+    tmp.type = Replace(tmp.type "S" "C|P")
+    color Select(Atom(as2_out) "gr==B") & a_*.//c* orange
+    color Select(Atom(as2_out) "gr~C|P") & a_*.//c* grey
+  endif # BS
+  if (s_split == "S") then
+    delete tmp.type != "S"
+    tmp.type = Replace(tmp.type "S" "C|P")
+    color Select(Atom(as2_out) "gr==B") & a_*.//c* orange
+    color Select(Atom(as2_out) "gr~C|P") & a_*.//c* grey
+  endif # BS
+  if (s_split == "T") then
+    delete tmp.type != "T"
+    tmp.stre = 0.5 * tmp.stre
+    tmp.type = Replace(tmp.type "T" "B|C|P")
+    color as2_out & a_*.//c* grey
+  endif # T
+  tmp.stre = Trim(tmp.stre 0.1 2.)
+  for i = 1, Nof(tmp)
+    obNm = tmp.obNm[i]
+    sresNum = String(tmp.rnum[i])
+    sgr = tmp.type[i]
+    set xstick Select(as2_out & Atom(a_$obNm./$sresNum) "gr~" + sgr) 0.2 * tmp.stre[i]
+  endfor # i
+  group tmp.rnum
+  l_singleChain = Nof(Unique(Field(Select(a_*./ "psite") "psite") sort) ) == 1
+  for i = 1, Nof(tmp)
+    sresNum = String(tmp.rnum[i])
+    rsel1 = (as2_out & a_*./$sresNum)[1]
+    slbl = Field(rsel1 "num")[1]
+    if (!l_singleChain) then ; slbl = Field(rsel1 "psite")[1] + "." + slbl ; endif
+    customLabel rsel1 slbl no
+  endfor # i
+  GRAPHICS.l_redraw = yes
+  display new
+endmacro # dsCL
+macro customLabel rs_ s_lbl l_update
+  if (Nof(rs_) != 1) then ; return error ; endif
+  GRAPHICS.l_redraw = no 
+  GRAPHICS.atomLabelShift = 1
+  asel = Select(Atom(rs_) "lbl")
+  if (!l_update & Nof(asel) > 0) then
+    display asel atom label yellow
+    return
+  endif # !l_update
+  delete field name="lbl" asel
+  # find "central" atom
+  asel = rs_ & a_*.//!h*,vt*
+  cen = Mean(Xyz(asel) )
+  group table tmp1 Sarray(asel) "sel" Distance(Xyz(asel) Xyz(cen) )[?,1] "d"
+  sort tmp1.d
+  s = tmp1.sel[1]
+  delete tmp1
+  asel = a_$s
+  set atom label asel s_lbl
+  set field name="lbl" asel
+  display asel atom label yellow
+endmacro # customLabel
+"""
+s = "if (Type(dsCL) != \"macro\") call string %@.dsCL ; dsCL \"%split\" \"%ligcl\" \"%resNum\""
+add header CLa s name="cursor"
+add header CLa smacro name="dsCL"
+
+# build the contact frequency table, keep strong contacts
+t = tstre
+delete t.stre < tdef.r_streCutoff
+for i = 1, Nof(Ssplit)
+  ssplit = Ssplit[i]
+
+  tmp = t
+  delete tmp.type != Split(ssplit "")
+  add column tmp ssplit name="split" index=1
+
+  consensusLig = Iarray(Split(Sum( (CLa.cons == "X" & CLa.split == ssplit).ligcl ",") ",") )
+  add column tmp "" name="cons"
+  tmp.cons[Index(tmp.ligcl == consensusLig) ] = "X"
+
+  add tcont tmp
+  delete tmp
+endfor # i
+delete t
+
+# add consensus residue codes
+group table t tres.resNum "resNum" tres.res "res"
+add column tcont Field(tcont.sel 1 "/") name="resNum"
+join left tcont.resNum t.resNum name="tcont"
+delete t
+
+# mean stre by group, count strong contacts
+add column tcont 1. name="cont"
+add column tcont tcont.split + Sarray(Nof(tcont) "@") + tcont.sel name="sig"
+group tcont.sig tcont.split "first" tcont.sel "first" tcont.res "first" tcont.cont "sum,freq" tcont.stre "mean" tcont.ligcl "uniq" tcont.cons "uniq"
+delete tcont.sig
+# freq = count of strong contacts / nof unique ligands
+tcont.freq = tcont.freq / Real(ligclmax)
+# exclude residues that have strong contacts only with non-consensus ligands
+delete tcont.cons == "" & tcont.freq < r_freqCutoff
+delete tcont.cons
+
+add column tcont Field(tcont.sel 1 "/") name="resNum"
+add column tcont Field(tcont.sel 2 "/") name="type" index=5
+# second sort of resNum to make proper order of insertion codes
+sort tcont.split number tcont.resNum tcont.resNum tcont.type
+
+# color by residue number
+add column tcont Count(tcont.resNum unique) name="rnum1"
+delete tcont.resNum
+set format tcont.sel color="rnum1 % 2 == 0 ? '#ffffaa' : 'white'"
+set format tcont.rnum1 show off # hide
+
+# color by contact strength
+add column tcont tcont.stre * tcont.freq name="w"
+S = Sgr // Sgra
+Sclr = Sgrclr // Sgraclr
+add column tcont "" name="clr"
+add column tcont "" name="clrw"
+for i = 1, Nof(S)
+  stype = S[i]
+  ii = Index(tcont.type == stype)
+  if (Nof(ii) > 0) then
+    sclr = Sclr[i]
+    rmax = RstreClrMax[i]
+    colorColor tcont.stre[ii] "white/" + sclr 0. rmax # S_out
+    tcont.clr[ii] = S_out
+    colorColor tcont.w[ii] "white/" + sclr 0. rmax # S_out
+    tcont.clrw[ii] = S_out
+  endif # ii
+endfor # i
+set format tcont.stre "%.2f" color="clr"
+set format tcont.freq "%.2f" color="rainbow='pink/white/skyblue,0:1'"
+set format tcont.w "%.2f" color="clrw"
+set format tcont.clr show off # hide
+set format tcont.clrw show off # hide
+
+# visualization
+s = "if (Type(dsStre) != \"macro\") call string tdef.dsStre ; dsStre \"%sel\" \"%ligcl\" Real(%stre)"
+add header tcont s name="cursor"
+
+# plot
+add column tcont Sqrt(tcont.w) name="sz"
+set format tcont.sz show off # hide
+splot = "x=stre;y=freq;color=clr;size=sz;shape=Circle;label=sel;depth=5.;;"
+if (Max(tcont.freq) - Min(tcont.freq) < 0.01) then
+  make plot tcont splot + "yStep=0.25;yRange=0.:1.05;;"
+else
+  make plot tcont splot
+endif # freq
+move tcont.ligcl index=1000 # end
+
+# description HTML
+read html finfo name="_info_"
+
+smkds = """
+
+s = ""
+if (Type(dsCL) != "macro") then ; s = "CLa.dsCL" ; endif
+call string $s
+
+# overall visualization
+macro mkds s_split s_ligcl s_lbl
+
+  l_commands = no 
+  l_info = l_commands
+
+  GRAPHICS.l_redraw = no 
+
+  GRAPHICS.xstickStyle = "chemplusaroma"
+  set xstick Select(a_*./ "psite") 0.1
+  set xstick Select(a_*./ "ligand") 0.15
+
+  tmp = CLa.split == s_split
+  if (s_ligcl == "0") then
+    # residues with strong contacts with the consensus ligand
+    tmp = tmp.cons == "X"
+  endif # s_ligcl
+  split tmp.ligcl separator=","
+  # restore S_ for ligcl
+  add column tmp Sarray(tmp.ligcl) name="ligcl2"
+  delete tmp.ligcl
+  rename tmp.ligcl2 "ligcl"
+  group tmp.ligcl tmp.split "first" tmp.size "sum" tmp.resNum "uniq"
+  if (s_ligcl == "0") then
+    # limit total nof ligands
+    ligclMax = 10
+    if (Nof(tmp) > ligclMax) then
+      sort reverse tmp.size
+      tmp = tmp[1:ligclMax]
+    endif # ligclMax
+  else
+    tmp = tmp.ligcl == s_ligcl
+  endif # s_ligcl
+  delete tmp.size
+  group tmp.split tmp.ligcl "sum" tmp.resNum "sum"
+
+  dsCL tmp.split[1] tmp.ligcl[1] tmp.resNum[1]
+  delete tmp
+  if (s_ligcl == "0") then ; center static ; endif
+  
+  undisplay string
+  if (s_lbl != "") then
+    display string s_lbl
+  endif # s_lbl
+
+  GRAPHICS.l_redraw = yes
+  display new
+
+endmacro # mkds
+"""
+
+set property smkds command on
+
+# write binary all "debug.icb" delete ; quit
+write binary a_*. table _info_ smkds fout delete
+
+l_info = yes
+quit
+

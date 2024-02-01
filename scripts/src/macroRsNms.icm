@@ -1,0 +1,47 @@
+# returns a sarray of Andrey-style selection identificators, on a per-residue, per-molecule, or per-object basis, depending on i_aggregationLevel {1, 2, 3}
+macro rsNmsListVect rs_ i_aggregationLevel
+  l_commands = no # echo off
+  l_info     = no
+  l_caseSensitivity = yes
+  
+  rs_ = Res(rs_) ; S_lst = Sarray(0) ; keep S_lst
+  if (Nof(rs_) == 0) return
+
+  group table t_ Sarray(rs_ residue) "sel" Name(rs_) "name"
+
+  arr1 = Split("ala cys cyss asp glu phe gly his hie hip ile lys leu met asn pro prou gln arg ser thr val trp tyr da dc dg dt ra rc rg ru", " ") ; n = Nof(arr1)
+  arr1 = Sarray(n "^") + arr1 + Sarray(n "$")
+  arr2 = Split("ACCDEFGHHHIKLMNPPQRSTVWYACGTACGU", "")
+# replace 3-letter codes to 1 letter for natural AA and nucleotides
+  t_.name = Replace(t_.name arr1 arr2)
+
+  n = Nof(t_)
+  if (n > 1 & i_aggregationLevel > 1) then # group by molName keeping the correct residue order
+    add column t_ Field(t_.sel, 1, "/") name="molName"
+    add column t_ Field(t_.sel, 1, ".") name="obName"
+# drop insertion codes if any
+    add column t_ Iarray(Match(Field(t_.sel, 2, "/"), "[0-9]+") ) name="resNum"
+# mark gaps by "-"
+    add column t_ (t_.resNum[2:n] // {0}) - t_.resNum - 1 name="gap"
+    add column t_ "" name="dash" ; t_.dash[Index(t_.gap > 0)] = "-" ; t_.name = t_.name + t_.dash ; delete t_.dash t_.gap
+
+# group by molName but keep the correct residue order,
+# hets are separated with dots
+    t_.name = Sarray(n "@") + Sarray(Count(10001, 10000 + n) ) + t_.name
+    group t_.molName t_.name "uniq" t_.obName "uniq" separator="." ; t_.name = Replace(t_.name, "@.{5}", "" regexp) ; t_.name = Replace(t_.name, {"-$", "-."}, {"", "-"})
+
+    if (i_aggregationLevel > 2) then # group by obName but keep the correct molecule order
+      n = Nof(t_) ; t_.name = Sarray(n "@") + Sarray(Count(10001, 10000 + n) ) + t_.name
+# molecules are separated with commas
+      group t_.obName t_.name "sum" separator="," ; t_.name = Replace(t_.name, "@.{5}", "" regexp)
+    endif # i_aggregationLevel > 2
+  endif # i_aggregationLevel > 1
+
+  # remove unnecessary dots
+  t_.name = Replace(t_.name, "\.([A-Z])", "\\1" regexp)
+  t_.name = Replace(t_.name, "([A-Z])\.", "\\1" regexp)
+ 
+  S_lst = t_.name
+
+endmacro # rsNmsListVect
+

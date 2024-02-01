@@ -1,0 +1,459 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<title>Info</title>
+<style type="text/css">
+a {
+            color : #334488;
+  text-decoration : none;
+}
+a:hover {
+  text-decoration : underline;
+}
+#page4 {
+       margin: 8px;
+  font-family: sans-serif;
+    font-size: 13px;
+   text-align: justify;
+}
+h1,h2,h3,h4,h5,h6 {
+      margin-top: 0px;
+     padding-top: 1ex;
+   margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+h4 {
+  margin-left: 3ex;
+}
+.as1 {
+             color: black;
+  background-color: #FFCC99;
+}
+.as2 {
+             color: black;
+  background-color: #FFDEAD;
+}
+.rs1 {
+             color: black;
+  background-color: #FFFFA3;
+}
+.rs2 {
+             color: black;
+  background-color: #FFFFCC;
+}
+.ms1 {
+             color: black;
+  background-color: #BFFFBF;
+}
+.ms2 {
+             color: black;
+  background-color: #E6FFE6;
+}
+.os1 {
+             color: black;
+  background-color: #BFD9FF;
+}
+.os2 {
+             color: black;
+  background-color: #E6F0FF;
+}
+.yb {
+             color: black;
+  background-color: #FFFF00;
+}
+.notelink {
+  vertical-align: super;
+      font-style: normal;
+}
+.it {
+  font-style: italic;
+}
+.bf {
+  font-weight: bold;
+}
+.tt, dt {
+  font-family: monospace;
+}
+.section {
+  display: none;
+}
+.chainA1 {
+  background-color: #ABFCAB; /* ICM palegreen */
+             color: black;
+}
+.chainA2 {
+  background-color: #74BCF2; /* ICM steelblue1 */
+             color: black;
+}
+.Me {
+  background-color: #74BCF2; /* ICM steelblue1 */
+             color: black;
+}
+.cF {
+  background-color: #FFFF96; /* ICM lightyellow */
+             color: black;
+}
+.ligand {
+  background-color: #C200EB;
+             color: white;
+       font-weight: bold;
+}
+</style>
+<script type="text/javascript">
+// global
+var SECTALL = 'c';
+var SECTSTATE = new Array(16);
+// toggle sections
+function toggleSection(n) {
+  var name = 'sect' + n.toString();
+  var elmnt = document.getElementById(name);
+  if (elmnt) {
+    if (SECTSTATE[n] !== 'e') {
+      elmnt.style.display = 'block';
+      SECTSTATE[n] = 'e';
+    } else {
+      elmnt.style.display = 'none';
+      SECTSTATE[n] = 'c';
+    } // SECTSTATE
+  } // elmnt
+} // toggleSection()
+// toggle all sections
+function toggleSectionAll() {
+  var i, name, elmnt, state, func, text;
+  if (SECTALL === 'c') {
+    func  = function(elmnt) { elmnt.style.display = 'block' ; };
+    state = 'e';
+    text  = 'collapse';
+  } else {
+    func  = function(elmnt) { elmnt.style.display = 'none' ; };
+    state = 'c';
+    text  = 'expand';
+  }
+  for (i = 0; i < SECTSTATE.length; i++) {
+    name = 'sect' + i.toString();
+    elmnt = document.getElementById(name);
+    if (elmnt) {
+      func(elmnt);
+      SECTSTATE[i] = state;
+    } // elmnt
+  } // for i
+  SECTALL = state;
+  elmnt = document.getElementById('toggleAll');
+  elmnt.innerHTML = text;
+}
+</script>
+</head>
+
+<body id="page4">
+
+<p>Click on the section header to expand/collapse the section. Click <a href="javascript:toggleSectionAll();" class="bf">here</a> to <span id="toggleAll">expand</span> all the sections.</p>
+
+<h3><a href="javascript:toggleSection(0);" title="expand/collapse">File structure</a></h3>
+
+<div id="sect0" class="section">
+
+<p>File contents:</p>
+
+<ul>
+  <li>molecular objects that represent the binding site and the ligands;</li>
+  <li>tables with analysis of the binding site ensemble;</li>
+  <li>this description.</li>
+</ul>
+
+</div><!-- sect0 -->
+
+<h3><a href="javascript:toggleSection(1);" title="expand/collapse">Molecular objects</a></h3>
+
+<div id="sect1" class="section">
+
+<p>Molecular objects were modified to facilitate calculations in a number of ways:</p>
+
+<ul>
+  <li>only main alternative coordinate set was preserved;</li>
+  <li>multiple covalently bonded ligand molecules were merged together;</li>
+  <li>ICM objects were stripped;</li>
+  <li>non-relevant residues were removed;</li>
+  <li>protein residues were renumbered and merged into one chain (so that residue numbers are unique within the object and consistent across the objects);</li>
+  <li>atom tag <span class="tt">gr</span> was set for protein atoms (with values B, C or P);</li>
+  <li>residue tag <span class="tt">stre</span> was set for protein residues (with values in the format <span class="tt">ligcl:type:stre(;ligcl:type:stre)*</span>);</li>
+  <li>residue tag <span class="tt">ligcl</span> was set for ligand residues (with integer index of the ligand cluster).</li>
+</ul>
+
+<p>Examples of object manipulation using these improvements are provided in the visualization scripts in the table headers.</p>
+
+<p>Each amino acid residue has atoms of several groups:</p>
+<dl>
+  <dt>B</dt><dd>backbone;</dd>
+  <dt>C</dt><dd>carbon (or non-polar) part of the side chain;</dd>
+  <dt>P</dt><dd>polar part of the side chain;</dd>
+  <dt>S</dt><dd>side chain (C + P);</dd>
+  <dt>T</dt><dd>total (or full residue) (B + S).</dd>
+</dl>
+
+<p>Side chain carbon/polar groups are defined as follows:</p>
+<ul>
+  <li>main rules:
+    <ol>
+      <li>carbon atoms are non-polar;</li>
+      <li>non-carbon atoms are polar;</li>
+    </ol>
+  </li>
+  <li>additional rules:
+    <ol start="3">
+      <li>sulfur atoms of Met and Cys (in disulfides) are non-polar;</li>
+      <li>carbon atoms are added to polar groups to avoid disjoint polar groups (Arg/C&zeta;, Asn,Asp/C&gamma;, Gln,Glu/C&delta;, His/C&epsilon;1);</li>
+      <li>carbon atom C&epsilon; is added to terminal polar group of Lys;</li>
+      <li>carbon atom C&beta; is added to single polar group of small side chain of Cys and Ser (for consistency Thr/C&beta; is also polar).</li>
+    </ol>
+  </li>
+</ul>
+
+</div><!-- sect1 -->
+
+<h3><a href="javascript:toggleSection(2);" title="expand/collapse">Table tdef</a></h3>
+
+<div id="sect2" class="section">
+
+<p>Table <span class="tt">tdef</span> contains definition of the individual contact strength (see <a href="http://dx.doi.org/10.1016/j.str.2011.05.012" target="_blank">GPCR Dock 2010 paper</a>).</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>d</dt><dd>distance in &Aring;;</dd>
+  <dt>stre</dt><dd>contact strength (in the range from 0 to 1).</dd>
+</dl>
+
+<p>Header contains various parameters to calculate contact strength, e.g. <span class="tt">r_dHi</span> is the upper limit on distance to consider given atom pair being in contact. Also contains macro <span class="tt">dsStre</span> to create molecular visualization of contact strength for the given protein residue group and ligand cluster; this macro is used in other tables.</p>
+
+<p>Dependence of the contact strength on distance is illustrated on the built-in plot.</p>
+
+</div><!-- sect2 -->
+
+<h3><a href="javascript:toggleSection(3);" title="expand/collapse">Table tlig</a></h3>
+
+<div id="sect3" class="section">
+
+<p>Table <span class="tt">tlig</span> contains information about ligands and ligand clusters.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>mol</dt><dd>chemical structure;</dd>
+  <dt>L</dt><dd>toggles ligand visualization on/off and indicates if the ligand is displayed (works in conjunction with the built-in actions);</dd>
+  <dt>obNm</dt><dd>object name;</dd>
+  <dt>molNm</dt><dd>molecule name;</dd>
+  <dt>rsNm</dt><dd>residue names;</dd>
+  <dt>lig</dt><dd>ligand index (corresponds to <span class="tt">ligand</span> tag);</dd>
+  <dt>ccl</dt><dd>chemical cluster (0 is specical value for singletons);</dd>
+  <dt>dcl</dt><dd>overlap cluster (0 is specical value for singletons);</dd>
+  <dt>cnt</dt><dd>number of ligands in the ligand cluster;</dd>
+  <dt>ligcl</dt><dd>ligand cluster (from 1).</dd>
+</dl>
+
+<p>To toggle ligand visualization on/off, change current row by clicking on any cell of the desired ligand cluster or use buttons in column <span class="tt">L</span>.</p>
+
+</div><!-- sect3 -->
+
+<h3><a href="javascript:toggleSection(4);" title="expand/collapse">Table tob</a></h3>
+
+<div id="sect4" class="section">
+
+<p>Table <span class="tt">tob</span> contains correspondence between objects and ligands, in the original object order.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>obNm</dt><dd>object name;</dd>
+  <dt>lig</dt><dd>ligand index;</dd>
+  <dt>ligcl</dt><dd>ligand cluster.</dd>
+</dl>
+
+</div><!-- sect4 -->
+
+<h3><a href="javascript:toggleSection(5);" title="expand/collapse">Table tres</a></h3>
+
+<div id="sect5" class="section">
+
+<p>Table <span class="tt">tres</span> contains information about binding site residues.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>original</dt><dd>residue number before renumbering, possibly with insertion code;</dd>
+  <dt>resNum</dt><dd>residue number, possibly with insertion code;</dd>
+  <dt>ch</dt><dd>chain name, e.g. <span class="tt">A1</span>;</dd>
+  <dt>swiss</dt><dd>name of the associated sequence;</dd>
+  <dt>res</dt><dd>residue code.</dd>
+</dl>
+
+<p>Residue codes were taken from the associated sequence (if any) or that are most frequent in the objects.</p>
+
+</div><!-- sect5 -->
+
+<h3><a href="javascript:toggleSection(6);" title="expand/collapse">Table tmut</a></h3>
+
+<div id="sect6" class="section">
+
+<p>Table <span class="tt">tmut</span> contains information about mutations relative to the provided sequence or the most frequent residue code in the given position and may be empty. Table <span class="tt">tmut</span> is not limited to binding site residues and thus preserves information required for extended SVG visualization mode with external residue selection.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>ligcl</dt><dd>ligand cluster;</dd>
+  <dt>ch</dt><dd>chain name, e.g. <span class="tt">A1</span>;</dd>
+  <dt>original</dt><dd>residue number before renumbering, possibly with insertion code;</dd>
+  <dt>res</dt><dd>residue code ('-' means deletion);</dd>
+  <dt>swiss</dt><dd>residue code in the reference sequence.</dd>
+</dl>
+
+<p>Header contains reference sequence(s), e.g. <span class="tt">seqA1</span>. Only useful for provided sequences since numeration is not preserved and assumed to start from 1.</p>
+
+</div><!-- sect6 -->
+
+<h3><a href="javascript:toggleSection(7);" title="expand/collapse">Table tflex</a></h3>
+
+<div id="sect7" class="section">
+
+<p>Table <span class="tt">tflex</span> contains analysis of flexibility of the binding site residues.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>resNum</dt><dd>residue number, possibly with insertion code;</dd>
+  <dt>nonflex</dt><dd>residue non-flexibility, from 0 (all conformations are different) to 1 (the same conformation);</dd>
+  <dt>nonflexbb</dt><dd>residue non-flexibility, backbone only;</dd>
+  <dt>dbb</dt><dd>difference between backbone-only and full-residue non-flexibility.</dd>
+</dl>
+
+<p>Header contains the visualization action. Click on the row to display residue flexibility.</p>
+
+</div><!-- sect7 -->
+
+<h3><a href="javascript:toggleSection(8);" title="expand/collapse">Table tstre</a></h3>
+
+<div id="sect8" class="section">
+
+<p>Table <span class="tt">tstre</span> contains contact strengths for all ligand clusters and binding site residues (groups).</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>ligcl</dt><dd>ligand cluster;</dd>
+  <dt>res</dt><dd>residue code;</dd>
+  <dt>sel</dt><dd>residue number / contact type;</dd>
+  <dt>stre</dt><dd>contact strength, from 0 to <span class="tt">tdef.r_streMax</span>;</dd>
+  <dt>type</dt><dd>contact type;</dd>
+  <dt>rnumt</dt><dd>residue type + contact type (used for plot only).</dd>
+</dl>
+
+<p>Contact strengths are shown on the built-in plot. For visualization purposes residues are renumbered in the plot so that all residues are equidistantly placed on the x-axis, with contacts of B, C, P, S, T types (in that order).</p>
+
+<p>Header contains the visualization action. Click on the row or contact on the plot to display contacts of the given selection / ligand cluster pair.</p>
+
+</div><!-- sect8 -->
+
+<h3><a href="javascript:toggleSection(9);" title="expand/collapse">Table tcdf</a></h3>
+
+<div id="sect9" class="section">
+
+<p>Table <span class="tt">tcdf</span> contains CDFs of contact strength of three contact types (B, C, P).</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>stre</dt><dd>contact strength;</dd>
+  <dt>freqX</dt><dd>frequency of contacts with the given strength of type X;</dd>
+  <dt>cdfX</dt><dd>CDF of contact strength of type X.</dd>
+</dl>
+
+<p>CDFs are shown on the built-in plot.</p>
+
+</div><!-- sect9 -->
+
+<h3><a href="javascript:toggleSection(10);" title="expand/collapse">Table tfp</a></h3>
+
+<div id="sect10" class="section">
+
+<p>Table <span class="tt">tfp</span> contains contact strengths of the full set of residues/groups vs all ligand clusters.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>sel</dt><dd>residue number / contact type;</dd>
+  <dt>type</dt><dd>contact type;</dd>
+  <dt>streX</dt><dd>contact strength for ligand cluster X, from 0 to <span class="tt">tdef.r_streMax</span>.</dd>
+</dl>
+
+<p>Header contains the visualization action. Click on the row (<span class="tt">streX</span> columns) or double-click on the cell to display contacts of the given selection / ligand cluster pair.</p>
+
+</div><!-- sect10 -->
+
+<h3><a href="javascript:toggleSection(11);" title="expand/collapse">Table CL</a></h3>
+
+<div id="sect11" class="section">
+
+<p>Table <span class="tt">CL</span> contains clustering of the ligand clusters by contact fingerprints. There are four different split types:</p>
+
+<dl>
+  <dt>BCP</dt><dd>backbone/carbon/polar;</dd>
+  <dt>BS</dt><dd>backbone/side chain;</dd>
+  <dt>S</dt><dd>side chain;</dd>
+  <dt>T</dt><dd>full residue.</dd>
+</dl>
+
+<p>Contact fingerprints depend on split type, thus the table contains four different fingerprint clusters. Table header contains four distance matrices for ligand clusters in terms of dissimilarity of the contact fingerprints, and corresponding trees. See description of <a href="http://www.molsoft.com/man/icm-commands.html#make-tree" target="_blank">make tree</a> command in the ICM manual.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>ligcl</dt><dd>ligand cluster;</dd>
+  <dt>fpclX</dt><dd>contact fingerprint cluster for split type X.</dd>
+</dl>
+
+</div><!-- sect11 -->
+
+<h3><a href="javascript:toggleSection(12);" title="expand/collapse">Table CLa</a></h3>
+
+<div id="sect12" class="section">
+
+<p>Table <span class="tt">CLa</span> contains clustering of the ligand clusters by contact fingerprints, see description of table <span class="tt">CL</span>. In contrast to table <span class="tt">CL</span> (which lists individual ligand clusters), table <span class="tt">CLa</span> lists individual fingerprint clusters and aggregated ligand clusters.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>fpcl</dt><dd>contact fingerprint cluster;</dd>
+  <dt>split</dt><dd>split type;</dd>
+  <dt>ligcl</dt><dd>ligand clusters;</dd>
+  <dt>size</dt><dd>number of ligand clusters in fingerprint cluster;</dd>
+  <dt>nofres</dt><dd>number of residues that make strong contacts with the ligands from the fingerprint cluster;</dd>
+  <dt>cons</dt><dd>empty string or 'X' for consensus ligands;</dd>
+  <dt>resNum</dt><dd>list of residue numbers.</dd>
+</dl>
+
+<p>Consensus ligand for the given split type is ligand clusters that belong to first 80% of fingerprint clusters, sorted by size and number of residues with strong contacts. This filter excludes unusual contact patterns.</p>
+
+<p>Header contains macro <span class="tt">dsCL</span> to create molecular visualization. Click on the row to display 3D visualization of the fingerprint cluster.</p>
+
+</div><!-- sect12 -->
+
+<h3><a href="javascript:toggleSection(13);" title="expand/collapse">Table tcont</a></h3>
+
+<div id="sect13" class="section">
+
+<p>Table <span class="tt">tcont</span> contains information about binding site residues that have at least one strong contact with consensus ligands.</p>
+
+<p>Columns:</p>
+<dl>
+  <dt>split</dt><dd>split type;</dd>
+  <dt>res</dt><dd>residue code;</dd>
+  <dt>sel</dt><dd>residue number / contact type;</dd>
+  <dt>type</dt><dd>contact type;</dd>
+  <dt>stre</dt><dd>average contact strength of strong contacts;</dd>
+  <dt>freq</dt><dd>frequency of strong contacts relative to all ligands;</dd>
+  <dt>w</dt><dd>residue weight (= strength * frequency);</dd>
+  <dt>ligcl</dt><dd>ligand clusters with strong contacts.</dd>
+</dl>
+
+<p>Contact strengths are displayed on the built-in plot.</p>
+
+<p>Header contains the visualization action. Click on the table row or contact on the plot to display 3D visualization of the contact.</p>
+
+</div><!-- sect13 -->
+
+<h3>Reference</h3>
+
+<p>Please cite this URL for the online tool:<br><a href="http://pocketome.org/basilico" target="_blank">http://pocketome.org/basilico</a></p>
+
+</body>
+</html>

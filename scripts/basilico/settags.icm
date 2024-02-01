@@ -1,0 +1,170 @@
+l_commands = no ; l_info = l_commands ; call _macro
+
+ifile = Getarg("if" "s_")
+ofile = Getarg("of" "s_")
+
+# macro die s_ l_notAnError
+f = "scripts/basilico/macroDieWeb.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroDieWeb.icm"
+  if (!Exist(f) ) then
+    print "macroDieWeb.icm not found"
+    quit 1
+  endif # f
+endif # f
+call f
+
+# macro checkFile s_file s_fileLabel
+f = "scripts/basilico/macroCheckFile.icm"
+if (!Exist(f) ) then
+  f = "basilico/macroCheckFile.icm"
+  if (!Exist(f) ) then ; die "macroCheckFile.icm not found" ; endif
+endif # f
+call f
+
+checkFile ifile "input"
+read binary object sequence only ifile
+
+if (Nof(a_*.) == 0) then ; die "no objects found" ; endif # a_*.
+
+# for every atom keep only the first alternative
+if ((Nof(a_//:bcde2345)>0) | (Nof(a_//AS)>0) | (Nof(Select(a_// "o==0."))>0)) then
+  l_ICM = no ; if Type(a_ 2)=="ICM" then ; l_ICM = yes ; strip a_ ; delete a_//vt* ; endif
+  delete a_//:bcde2345  # delete marked secondary alternatives if any
+                        # this enforcement is for cases of inequivalent alternatives (eg different molecules are alternatives)
+  delete a_//AS         # delete remaining secondary alternatives if any
+  set comment a_//A " " # clear the alternative flag of the main alternative
+  # delete atoms with zero occupancy
+  if (!l_ICM) delete Select(a_// "o==0.")
+  if l_ICM then ; convertObject a_ yes no yes no no no no "" ; endif # l_delete_water=yes l_optimize_hydrogens=no l_replace_the_original=yes l_display=no l_optimize_his=no l_maskMissing=no l_assignHeteroCharges=no s_options=""
+  delete l_ICM
+endif
+
+if (Nof(a_*.) == 0) then ; die "no objects found" ; endif # a_*.
+
+# requirements:
+# ligand residue tag: ligand index
+# psite residue tag: chain A1/../B1/..
+
+# check ligand tag is present
+lig = Select(a_*./ "ligand")
+if (Nof(lig) == 0) then
+  lig = a_*.H/
+  if (Nof(lig) == 0) then ; die "no ligand found" yes ; endif
+  set field name="ligand" lig
+endif # lig
+
+# check ligand tag has value
+a = Field(lig "ligand")
+if (Type(a) != "iarray") then
+  group table t Sarray(lig residue) "rsel"
+  add column t Field(t.rsel 1 "/") name="obMol"
+  tt = t
+  add column tt Count(Nof(tt) ) name="i" 
+  group tt.obMol tt.i "first"
+  sort tt.i
+  delete tt.i
+  add column tt Count(Nof(tt) ) name="ilig"
+  join left t.obMol tt.obMol name="t"
+  delete tt
+  delete field name="ligand" lig
+  set field name="ligand" lig t.ilig
+  delete t
+endif # a
+
+macro setChains ms_
+  l_showResCodeInSelection = no
+  if (Nof(ms_) == 0) then ; return ; endif
+  group table t Sarray(ms_ residue) "rsel"
+  add column t Field(t.rsel 1 ".") name="ob"
+  add column t Field(t.rsel 1 "/") name="obMol"
+  add column t Count(Nof(t) ) name="i"
+  group t.obMol t.i "first" t.ob "first"
+  sort t.i
+  delete t.i
+  add column t Sarray(Nof(t) "A") + Sarray(Count(t.ob identity) ) name="ch"
+  delete field name="chain" ms_
+  for i = 1, Nof(t)
+    s = t.obMol[i]
+    ch = t.ch[i]
+    set field name="chain" a_$s ch
+  endfor # i
+endmacro # setChains
+
+# check if psite tag is present
+psite = Select(a_*./ "psite")
+if (Nof(psite) == 0) then
+  msel = a_*.A & a_*.J30
+  setChains Mol(msel)
+  Sch = Unique(Field(Select(a_*.* "chain") "chain") sort)
+  l_showResCodeInSelection = no
+  for i = 1, Nof(Sch)
+    ch = Sch[i]
+    rsel = Sphere(lig Select(a_*.* "chain==" + ch) -1.2 residue)
+    if (Nof(rsel) == 0) then ; continue ; endif # next chain
+    group table t Sarray(rsel residue) "rsel"
+    add column t Field(t.rsel 2 "/") name="rsNum"
+    for j = 1, Nof(t)
+      rsNum = t.rsNum[j]
+      rsel1 = Select(a_*.* "chain==" + ch) & a_*./$rsNum
+      set field name="psite" rsel1 ch
+    endfor # j
+    delete t
+  endfor # i
+endif # psite
+
+# check if psite tag has value
+psite = Select(a_*./ "psite")
+group table t Field(psite "psite") "ch"
+l_empty = (Nof(t.ch == "") > 0)
+delete t
+if (l_empty) then
+  setChains Mol(psite)
+  msel = Select(a_*.* "chain") & Mol(psite)
+  group table t Sarray(psite residue) "rsel"
+  add column t Field(t.rsel 1 "/") name="obMol"
+  group table tt Field(Name(msel full) 2 "_") "obMol" Field(msel "chain") "ch"
+  join left t.obMol tt.obMol name="t"
+  delete tt
+  delete field name="psite" psite
+  for i = 1, Nof(t)
+    s = t.rsel[i]
+    ch = t.ch[i]
+    rsel1 = a_$s
+    set field name="psite" rsel1 ch
+  endfor # i
+endif # l_empty
+
+# delete objects if any of psite/ligand tags is not present in the object
+psite = Select(a_*./ "psite")
+lig = Select(a_*./ "ligand")
+osel = a_*. & !(Obj(psite) & Obj(lig) )
+if (Nof(osel) > 0 ) then ; delete Obj(osel) ; endif
+delete osel
+
+# detect single sequence with proper residue numbers, but without swiss tag
+l_seq1 = Nof(sequence) == 1
+l_seq1 = l_seq1 & (Nof(Name(Mol(Select(a_*./ "psite") ) swiss) != "") == 0)
+l_seq1 = l_seq1 & (Nof(Mol(Select(a_*./ "psite==A1") ) ) == Nof(Mol(Select(a_*./ "psite") ) ) )
+l_seq1 = l_seq1 & (Nof(Mol(Select(a_*./ "psite==A1") ) ) == Nof(a_*.) )
+if (l_seq1) then
+  sseq = Name(sequence)[1]
+  msel = (Mol(Select(a_*./ "psite") ) )[1]
+  make sequence msel name="mseq"
+  aaa = Align($sseq mseq)
+  rscore = Score(aaa identity) # 0. - 100.
+  if (rscore > 95.) then
+    # TODO: check if residue numbers are correct
+  endif # rscore
+  delete mseq
+endif # l_seq1
+
+if (Nof(a_*.) > 0) then
+  write binary a_*. sequence ofile delete
+else
+  die "no protein-ligand complexes found" yes
+endif # a_*.
+
+l_info = yes # get session info
+quit
+

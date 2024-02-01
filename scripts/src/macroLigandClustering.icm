@@ -1,0 +1,112 @@
+# move all ligands into 1 object
+macro moveLigands1
+  l_commands = no
+  l_info = l_commands
+  rsel = Select(a_*./ "ligand")
+  set field name="obNm" Mol(rsel) Name(Mol(rsel) object)
+  n = Nof(a_*.)
+  for i = n, 2, -1
+    set object a_$i.
+    m = Nof(Mol(rsel) & a_)
+    for j = m, 1, -1
+      move a_1 a_1.
+    endfor # j
+  endfor # i
+  rename a_1. "lig"
+endmacro # moveLigands1
+
+# ligand table
+macro makeLigandTable
+  l_commands = no
+  l_info = l_commands
+  group table tlig Chemical(a_*) "mol" Field(a_* "obNm") "obNm" Name(a_* molecule) "molNm"
+  group table t Name(a_1./ molecule) "molNm" Name(a_1./ residue) "rsNm" Field(a_1./ "ligand") "lig"
+  group t.molNm t.lig "first" t.rsNm "sum"
+  join left tlig.molNm t.molNm name="tlig"
+  if (Type(rsNmsListVect) == "macro") then
+    iAggregateByMol = 2
+    rsNmsListVect a_/ iAggregateByMol # S_lst
+    if (Nof(S_lst) == Nof(tlig) ) then ; tlig.rsNm = S_lst ; endif
+  endif # rsNmsListVect
+  keep tlig
+endmacro # makeLigandTable
+
+macro chemicalClustering
+  l_commands = no
+  l_info = l_commands
+  m = Distance(tlig.mol tlig.mol)
+  chemClusterCutoff = 0.1
+  add column tlig Cluster(m chemClusterCutoff) name="ccl"
+  T_out = tlig
+  keep T_out
+endmacro # chemicalClustering
+
+macro distanceClustering
+  l_commands = no
+  l_info = l_commands
+  overlapCutoff = 2.0
+  distClusterCutoff = 0.333
+  tlig1 = tlig
+  delete tlig
+  t = tlig1.ccl > 0
+  if (Nof(t) > 0) then
+    group table t1 Sarray() "molNm" Iarray() "dcl"
+    for ccl = 1, Max(t.ccl)
+      tt = t.ccl == ccl
+      n = Nof(tt)
+      msel = !a_*.
+      for i = 1, n
+        s = "\\" + tt.molNm[i]
+        msel = msel | a_$s
+      endfor # i
+      m = Matrix(n n 0.)
+      for i = 1, n
+        for j = i + 1, n
+          asel1 = Select(Atom(msel[i]) "r")
+          asel2 = Select(Atom(msel[j]) "r")
+          nat = Nof(asel1 | asel2)
+          if (nat > 0) then
+            # 1. - fraction of atoms in vicinity
+            m[i, j] = 1. - Nof(Sphere(asel1 asel2 overlapCutoff) | Sphere(asel2 asel1 overlapCutoff) ) / Real(nat)
+          else
+            m[i, j] = 1.
+          endif # nat
+          m[j, i] = m[i, j]
+        endfor # j
+      endfor # i
+      add column tt Cluster(m distClusterCutoff) name="dcl"
+      add t1 tt
+    endfor # ccl
+    join left tlig1.molNm t1.molNm name="tlig2" # add dcl column to tlig table
+    delete t t1 tt
+  else
+    add column tlig1 0 name="dcl" # required column
+    tlig2 = tlig1
+  endif # t
+  T_out = tlig2
+  keep T_out
+endmacro # distanceClustering
+
+# count ligands in ligand cluster
+macro countLigands
+  l_commands = no
+  l_info = l_commands
+  tlig1 = tlig
+  delete tlig
+  add column tlig1 Sarray(tlig1.ccl) + Sarray(Nof(tlig1) "cl") + Sarray(tlig1.dcl) name="clsig"
+  sort tlig1.ccl tlig1.dcl
+  ii = Index(tlig1.clsig ~ {"0cl*", "*cl0"} )
+  n = Nof(ii)
+  if (n > 0) then ; tlig1.clsig[ii] = tlig1.clsig[ii] + Sarray(n "-") + Sarray(ii) ; endif
+  t = tlig1
+  add column t 1 name="cnt"
+  group t.clsig t.cnt "sum"
+  sort reverse t.cnt t.clsig
+  add column t Count(Nof(t) ) name="ligcl"
+  join left tlig1.clsig t.clsig name="tlig2"
+  delete tlig2.clsig
+  sort tlig2.ligcl tlig2.lig
+  T_out = tlig2
+  keep T_out
+endmacro # countLigands
+

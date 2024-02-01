@@ -1,0 +1,25 @@
+# mimics new functionality of Color(Color(R_ s_gradient r_min r_max) ) => S_hexclr
+# for old ICM versions
+macro colorColor R_ s_gradient r_min r_max
+  l_commands = no 
+  l_info = l_commands
+  M_out = 255 * Color(R_ s_gradient r_min r_max)
+  Ttmp1 = Table(M_out)
+  add column Ttmp1 Iarray(Trim(Ttmp1.A 0. 255.) ) name="r"
+  add column Ttmp1 Iarray(Trim(Ttmp1.B 0. 255.) ) name="g"
+  delete Ttmp1.B # for join with tmp2
+  add column Ttmp1 Iarray(Trim(Ttmp1.C 0. 255.) ) name="b"
+  group table Ttmp2 Count(0 255) "i" Sarray(256) "R"  
+  for i = 1, Nof(Ttmp2)
+    sprintf "%02x" name="s" Ttmp2.i[i]
+    Ttmp2.R[i] = s
+  endfor # i  
+  join left Ttmp1.r Ttmp2.i name="Ttmp1"
+  rename Ttmp2.R "G"  
+  join left Ttmp1.g Ttmp2.i name="Ttmp1"
+  rename Ttmp2.G "B"  
+  join left Ttmp1.b Ttmp2.i name="Ttmp1"
+  delete Ttmp2 
+  S_out = Sarray(Nof(Ttmp1) "#") + Sarray(Ttmp1.R) + Sarray(Ttmp1.G) + Sarray(Ttmp1.B)
+  keep S_out
+endmacro # colorColor

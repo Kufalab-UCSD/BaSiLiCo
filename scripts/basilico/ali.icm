@@ -1,0 +1,93 @@
+# #!/pro/icm/icms/icmng64 -W/pro/icm/icms/
+
+l_commands = no
+l_info = l_commands
+
+alifile = Getarg("ali" "s_" delete)
+ofile = Getarg("of" "tf.tab" delete)
+Sfiles = Getarg(list)
+
+# read alignment
+read alignment alifile name="a"
+ta = Table(a)
+add header ta Name(sequence) name="seqNm"
+
+# read stre files
+for i = 1, Nof(Sfiles)
+  f = Sfiles[i]
+  read binary only f name={"tstre", "tres", "tdef"}
+  t = tstre.type == "T" & tstre.stre > tdef.r_streCutoff
+  group t.sel
+  add column t Field(t.sel 1 "/") name="resNum"
+  delete tres.resNum != t.resNum
+  delete t
+  delete tres.swiss != ta.seqNm
+  # delete residues with no match in the alignment
+  delete tres.original == "0"
+  add column tres Replace(tres.original "[0-9]" "" regexp) name="ins"
+  delete tres.ins != ""
+  if (Nof(tres) > 0) then
+    add column tres f name="f"
+# keep residue numbers with strong contacts in the stre file
+    add tall tres
+  endif # tres
+  delete tstre tres tdef
+endfor # i
+
+if (Type(tall) != "table" | Nof(tall) == 0) then
+  print "No residues that match the alignment. Check sequence names in the alignment."
+  quit 1
+endif
+
+# determine chain composition
+Sch = Unique(tall.ch sort)
+sch = Sum(Sch ",")
+add column ta sch name="ch"
+split ta.ch separator=","
+add header ta Name(sequence) name="seqNm"
+add column ta 0 name="cont"
+
+# determine positions in the alignment with strong contacts
+for i = 1, Nof(Sch)
+  ch = Sch[i]
+  ii = Index(ta.ch == ch)
+  for j = 1, Nof(ta.seqNm)
+    sseqNm = ta.seqNm[j]
+    t = tall.ch == ch & tall.swiss == sseqNm
+    if (Nof(t) == 0) then ; continue ; endif # next sequence
+    group table tmp Iarray(t.original) "resNum" Iarray(Nof(t) 1) "i"
+    delete t
+    join left ta.$sseqNm tmp.resNum name="ta"
+    delete tmp
+    ta.cont[ii] = ta.cont[ii] + ta.i[ii]
+    delete ta.i
+  endfor # j
+endfor # i
+delete ta.cont == 0
+
+# assign residue numbers to files
+S = Sarray(Nof(tall) "@")
+add column tall tall.f + S + tall.ch name="sig"
+group tall.sig tall.f "first" tall.ch "first" tall.swiss "first"
+group table tf Unique(tall.f sort) "f"
+add column tf "" name="lst"
+for i = 1, Nof(tf)
+  f = tf.f[i]
+  t = tall.f == f
+  slst = ""
+  for j = 1, Nof(t)
+    ch = t.ch[j]
+    sseqNm = t.swiss[j]
+    tmp = ta.ch == ch
+    slst += "|" + ch + "/" + Sum(Replace(Sarray(tmp.$sseqNm) "^0" "-") ",")
+    delete tmp
+  endfor # j
+  delete t
+  tf.lst[i] = Replace(slst "^|" "")
+endfor # i
+
+write table tf ofile delete
+
+l_info = yes
+quit
+
