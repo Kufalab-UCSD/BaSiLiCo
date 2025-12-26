@@ -1,9 +1,8 @@
-#!/pro/icm/icms/icmng64 -w/pro/icm/icms/
-
 # needs license for `make tree`
+l_commands = no ; l_info = l_commands ; errorAction = "quit"
 
-l_commands = no
-l_info = l_commands
+s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
+if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
 
 # integrated invocation within Pocketome
 id = Getarg("id", "s_")
@@ -17,14 +16,14 @@ l_objectMode = Getarg("ob" find)
 ftlig = Getarg("tlig", "s_")
 
 fconfig = "config"
-fSafeOffset = "scripts/src/funcSafeOffset.icm"
-fdie = "scripts/basilico/macroDieWeb.icm"
-fcheckFile = "scripts/basilico/macroCheckFile.icm"
-fcolorColor = "scripts/basilico/macroColorColor.icm"
-ftclr = "data/basilico/tclr.icb"
-finfo = "data/basilico/info.html"
+fSafeOffset = s_BaSiLiCo_root+"/scripts/src/funcSafeOffset.icm"
+fdie        = s_BaSiLiCo_root+"/scripts/basilico/macroDieWeb.icm"
+fcheckFile  = s_BaSiLiCo_root+"/scripts/basilico/macroCheckFile.icm"
+fcolorColor = s_BaSiLiCo_root+"/scripts/basilico/macroColorColor.icm"
+ftclr       = s_BaSiLiCo_root+"/data/basilico/tclr.icb"
+finfo       = s_BaSiLiCo_root+"/data/basilico/info.html"
 
-macroDir = "basilico/"
+macroDir = s_BaSiLiCo_root+"/basilico/"
 if (l_external) then
   fconfig = ""
   if (!Exist(fdie) ) then

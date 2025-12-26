@@ -1,12 +1,15 @@
-l_commands = no ; l_info = l_commands ; call _macro
+l_commands = no ; l_info = l_commands ; call _macro ; errorAction = "quit"
+
+s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
+if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
 
 ifile = Getarg("if" "s_")
 ofile = Getarg("of" "s_")
 
 # macro die s_ l_notAnError
-f = "scripts/basilico/macroDieWeb.icm"
+f = s_BaSiLiCo_root+"/scripts/basilico/macroDieWeb.icm"
 if (!Exist(f) ) then
-  f = "basilico/macroDieWeb.icm"
+  f = s_BaSiLiCo_root+"/basilico/macroDieWeb.icm"
   if (!Exist(f) ) then
     print "macroDieWeb.icm not found"
     quit 1
@@ -15,9 +18,9 @@ endif # f
 call f
 
 # macro checkFile s_file s_fileLabel
-f = "scripts/basilico/macroCheckFile.icm"
+f = s_BaSiLiCo_root+"/scripts/basilico/macroCheckFile.icm"
 if (!Exist(f) ) then
-  f = "basilico/macroCheckFile.icm"
+  f = s_BaSiLiCo_root+"/basilico/macroCheckFile.icm"
   if (!Exist(f) ) then ; die "macroCheckFile.icm not found" ; endif
 endif # f
 call f

@@ -1,8 +1,7 @@
-#!/pro/icm/icms/icmng64 -W/pro/icm/icms/
+l_commands = no ; l_debug = l_commands ; l_info = l_commands ; errorAction = "quit"
 
-l_commands = no
-l_debug = l_commands
-l_info = l_commands
+s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
+if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
 
 ifile = Getarg("if" "s_")
 
@@ -21,9 +20,9 @@ ohtml = Getarg("ohtml" "s_")
 otsv = Getarg("otsv" "s_")
 
 # macro die s_ l_notAnError
-f = "scripts/basilico/macroDieWeb.icm"
+f = s_BaSiLiCo_root+"/scripts/basilico/macroDieWeb.icm"
 if (!Exist(f) ) then
-  f = "basilico/macroDieWeb.icm"
+  f = s_BaSiLiCo_root+"/basilico/macroDieWeb.icm"
   if (!Exist(f) ) then
     print "macroDieWeb.icm not found"
     quit 1
@@ -32,21 +31,20 @@ endif # f
 call f
 
 # macro checkFile s_file s_fileLabel
-f = "scripts/basilico/macroCheckFile.icm"
+f = s_BaSiLiCo_root+"/scripts/basilico/macroCheckFile.icm"
 if (!Exist(f) ) then
-  f = "basilico/macroCheckFile.icm"
+  f = s_BaSiLiCo_root+"/basilico/macroCheckFile.icm"
   if (!Exist(f) ) then ; die "macroCheckFile.icm not found" ; endif
 endif # f 
 call f
 
 # function s_rsel
-f =  "scripts/basilico/funcCheckRsel.icm"
+f = s_BaSiLiCo_root+"/scripts/basilico/funcCheckRsel.icm"
 if (!Exist(f) ) then
-  f = "basilico/funcCheckRsel.icm"
+  f = s_BaSiLiCo_root+"/basilico/funcCheckRsel.icm"
   if (!Exist(f) ) then ; die "funcCheckRsel.icm not found" ; endif
 endif # f 
 call f
-
 
 l_showResCodeInSelection = no
 

@@ -1,7 +1,7 @@
-# #!/pro/icm/icms/icmng64 -W/pro/icm/icms/
+l_commands = no ; l_info = l_commands ; errorAction = "quit"
 
-l_commands = no
-l_info = l_commands
+s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
+if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
 
 alifile = Getarg("ali" "s_" delete)
 ofile = Getarg("of" "tf.tab" delete)
@@ -10,7 +10,8 @@ Sfiles = Getarg(list)
 # read alignment
 read alignment alifile name="a"
 ta = Table(a)
-add header ta Name(sequence) name="seqNm"
+#add header ta Name(sequence) name="seqNm"
+add header ta Name(a) name="seqNm" ### 2024-02-18 changed
 
 # read stre files
 for i = 1, Nof(Sfiles)
