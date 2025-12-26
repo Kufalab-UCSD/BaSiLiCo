@@ -11,10 +11,8 @@ else
     exit 1
 fi
 
-BASILICO_ROOT=$GITHUB'/BaSiLiCo'
-BASILICO_ROOT="$(dirname "$(readlink -f -n "$0")")"
-echo $BASILICO_ROOT
-exit 0
+export BASILICO_ROOT=$GITHUB'/BaSiLiCo'
+export BASILICO_ROOT="$(dirname "$(readlink -f -n "$0")")"
 
 #SCRIPTDIR="$(dirname "$(readlink -f -n "$0")")"
 
