@@ -26,6 +26,6 @@ set format tclr.clr color="clr"
 
 write binary tclr ftclr delete
 
-l_info = yes
+#l_info = yes ### get session info
 quit
 

@@ -1,4 +1,4 @@
-l_commands = no ; l_info = l_commands ; errorAction = "quit"
+l_commands = no ; l_info = l_commands ; l_warn = l_commands ; errorAction = "quit"
 
 s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
 if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
@@ -123,6 +123,6 @@ endif # l_objectMode
 
 write binary tlig ofile delete
 
-l_info = yes # get session info
+#l_info = yes # get session info
 quit
 

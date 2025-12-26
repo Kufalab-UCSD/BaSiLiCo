@@ -89,6 +89,6 @@ endfor # i
 
 write table tf ofile delete
 
-l_info = yes
+#l_info = yes ### get session info
 quit
 

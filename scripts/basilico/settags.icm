@@ -1,4 +1,4 @@
-l_commands = no ; l_info = l_commands ; call _macro ; errorAction = "quit"
+l_commands = no ; l_info = l_commands ; l_warn = l_commands ; call _macro ; errorAction = "quit"
 
 s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
 if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
@@ -168,6 +168,6 @@ else
   die "no protein-ligand complexes found" yes
 endif # a_*.
 
-l_info = yes # get session info
+#l_info = yes # get session info
 quit
 

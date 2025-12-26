@@ -1,4 +1,4 @@
-l_commands = no ; l_debug = l_commands ; l_info = l_commands ; errorAction = "quit"
+l_commands = no ; l_debug = l_commands ; l_info = l_commands ; l_warn = l_commands ; errorAction = "quit"
 
 s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
 if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
@@ -1166,6 +1166,6 @@ if (otsv != "s_") then ; writeTSV otsv ; endif
 
 if (l_debug) then ; write binary all "debugweb.icb" delete ; endif
 
-l_info = yes # get session info
+#l_info = yes # get session info
 quit
 

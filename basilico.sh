@@ -11,11 +11,9 @@ else
     exit 1
 fi
 
-export BASILICO_ROOT=$GITHUB'/BaSiLiCo'
 export BASILICO_ROOT="$(dirname "$(readlink -f -n "$0")")"
 
-#SCRIPTDIR="$(dirname "$(readlink -f -n "$0")")"
-
+### default values for input arguments
 IFILE=
 ODIR=
 OBJECTMODE=
@@ -35,6 +33,7 @@ function show_help {
   exit $1
 }
 
+### parse arguments
 while getopts ":i:d:oMwh" opt; do
   case $opt in
     i) IFILE=$OPTARG ;;
@@ -56,12 +55,10 @@ done
 shift $((OPTIND - 1)) # Leave behind remaining arguments.
 
 ### confirm that IFILE and ODIR are defined
-#[ "x${IFILE}" == 'x' ] && show_help 0
-#[ "x${ODIR}"  == 'x' ] && show_help 0
-[ -z "${IFILE}" ] && show_help 0
-[ -z "${ODIR}"  ] && show_help 0
+[ "x${IFILE}" == 'x' ] && show_help 0
+[ "x${ODIR}"  == 'x' ] && show_help 0
 
-### canonicalize, resolve symlinks for the input file and output dir
+### canonicalize paths, resolve symlinks for the input file and output dir
 IFILE="$(readlink -f -n "${IFILE}")"
 ODIR="$(readlink -m -n "${ODIR}")"
 
@@ -76,7 +73,6 @@ TSV="${ODIR}/${NAME}.tsv"
 
 ### execute
 (
-# cd ${SCRIPTDIR}/..
 
 # similar to the Pocketome web server
 [ "x${LIMITMEMORY}" == 'xtrue' ] && ulimit -m 600000
@@ -111,5 +107,5 @@ set +x
 ) || exit 1
 
 echo
-echo 'BaSiLiCo OK'
+echo 'Info: BaSiLiCo completed successfuflly'
 echo
