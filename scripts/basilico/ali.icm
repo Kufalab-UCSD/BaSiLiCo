@@ -1,7 +1,7 @@
-l_commands = no ; l_info = l_commands ; errorAction = "quit"
+l_commands = no ; l_info = l_commands ; l_warn = l_commands ; errorAction = "quit"
 
 s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
-if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is defined; please define and rerun" ; endif
+if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is undefined; please define and rerun" ; quit ; endif
 
 alifile = Getarg("ali" "s_" delete)
 ofile = Getarg("of" "tf.tab" delete)
@@ -12,6 +12,12 @@ read alignment alifile name="a"
 ta = Table(a)
 #add header ta Name(sequence) name="seqNm"
 add header ta Name(a) name="seqNm" ### 2024-02-18 changed
+print "Info: the provided alignment contains" Nof(Name(a)) "sequence[s]:" Sum(Name(a), ", ")
+
+if Nof(Sfiles)<1 then
+  print "Error: no input *_stre.icb files provided, nothing to do."
+  quit 1
+endif
 
 # read stre files
 for i = 1, Nof(Sfiles)
@@ -22,6 +28,11 @@ for i = 1, Nof(Sfiles)
   add column t Field(t.sel 1 "/") name="resNum"
   delete tres.resNum != t.resNum
   delete t
+  swissnms = Sum(Unique(Sort(tres.swiss)), ", ")
+  if swissnms == "" then ; print "Warning: input binary" f "did not inherit any swiss tags on protein molecules and will be skipped" ; endif
+  delete tres.swiss == ""
+  swissnms = Sum(Unique(Sort(tres.swiss[Index(tres.swiss != ta.seqNm)])), ", ")
+  if swissnms != "" then ; print "Warning: input binary" f "has swiss tags on protein molecules that do not match the provided alignment (" swissnms ") and will be skipped" ; endif
   delete tres.swiss != ta.seqNm
   # delete residues with no match in the alignment
   delete tres.original == "0"
@@ -36,7 +47,7 @@ for i = 1, Nof(Sfiles)
 endfor # i
 
 if (Type(tall) != "table" | Nof(tall) == 0) then
-  print "No residues that match the alignment. Check sequence names in the alignment."
+  print "Error: no residues that match the alignment are left in the input binaries. Make sure the alignment sequence names match the swiss tags on the input binary proteins."
   quit 1
 endif
 
