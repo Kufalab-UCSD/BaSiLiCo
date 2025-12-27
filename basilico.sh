@@ -24,8 +24,8 @@ echo
 
 function show_help {
   echo 'Usage:'
-  echo 'bash '$BASILICO_ROOT'/tools/basilico.sh -i input.icb -d output/ [-o -w]'
-  echo 'bash '$BASILICO_ROOT'/tools/basilico.sh -h'
+  echo 'bash '$BASILICO_ROOT'/basilico.sh -i input.icb -d output/ [-o -w]'
+  echo 'bash '$BASILICO_ROOT'/basilico.sh -h'
   echo '  -o = object mode [default: ensemble mode]'
   echo '  -w = do not generate web files'
   echo '  -h = show this help message'
@@ -52,7 +52,7 @@ while getopts ":i:d:oMwh" opt; do
       ;;
   esac
 done
-shift $((OPTIND - 1)) # Leave behind remaining arguments.
+shift $((OPTIND - 1)) # pop parsed arguments, leave the remaining arguments
 
 ### confirm that IFILE and ODIR are defined
 [ "x${IFILE}" == 'x' ] && show_help 0
@@ -75,7 +75,7 @@ TSV="${ODIR}/${NAME}.tsv"
 (
 
 # similar to the Pocketome web server
-[ "x${LIMITMEMORY}" == 'xtrue' ] && ulimit -m 600000
+[ "x${LIMITMEMORY}" == 'xtrue' ] && ulimit -m 6000000 ### 2025-12-26 IK - used to be 600000 but this is not enough to start icm
 
 mkdir -pv -- ${ODIR} || exit 1
 
