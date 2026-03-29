@@ -2,6 +2,7 @@
 
 echo
 echo "Info: BaSiLiCo v1, copyright 2019 Andrey Ilatovskiy"
+exit 0
 ### confirm that the script is being executed with bash 
 if [ -n "$BASH_VERSION" ]; then
     echo "Info: Executed with bash version $BASH_VERSION"
