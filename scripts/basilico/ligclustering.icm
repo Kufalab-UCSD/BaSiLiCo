@@ -1,7 +1,7 @@
 l_commands = no ; l_info = l_commands ; l_warn = l_commands ; errorAction = "quit"
 
 s_BaSiLiCo_root = Getenv("BASILICO_ROOT", "")
-if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is undefined; please define and rerun" ; quit ; endif
+if (s_BaSiLiCo_root=="") then ; print "Error: BASILICO_ROOT environmental variable is undefined; please define and rerun" ; quit 1 ; endif
 
 ifile = Getarg("if" "s_")
 ofile = Getarg("of" "s_")
